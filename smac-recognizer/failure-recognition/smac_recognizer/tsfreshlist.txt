@@ -1,0 +1,1092 @@
+[
+  {
+    "Enabled": true,
+    "Name": "abs_energy",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "absolute_maximum",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "absolute_sum_of_changes",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": true,
+    "Name": "agg_autocorrelation",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "f_agg",
+              "Type": {
+                "Range": [
+                  "mean",
+                  "var",
+                  "std",
+                  "median"
+                ],
+                "SystemType": "string"
+              }
+            },
+            {
+              "Name": "maxlag",
+              "Type": {
+                "DefaultValue": 5,
+                "Range": [
+                  0,
+                  0
+                ],
+                "SystemType": "int"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "agg_linear_trend",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "attr",
+              "Type": {
+                "Range": [
+                  "pvalue",
+                  "rvalue",
+                  "intercept",
+                  "slope",
+                  "stderr"
+                ],
+                "SystemType": "string"
+              }
+            },
+            {
+              "Name": "chunk_len",
+              "Type": {
+                "Range": [
+                  0,
+                  0
+                ],
+                "SystemType": "int"
+              }
+            },
+            {
+              "Name": "f_agg",
+              "Type": {
+                "Range": [
+                  "max",
+                  "min",
+                  "mean",
+                  "median"
+                ],
+                "SystemType": "string"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "pandas.Series"
+  },
+  {
+    "Enabled": false,
+    "Name": "approximate_entropy",
+    "InputParameters": [
+      {
+        "Name": "m",
+        "Type": {
+          "Range": [
+            0,
+            5
+          ],
+          "SystemType": "int"
+        }
+      },
+      {
+        "Name": "r",
+        "Type": {
+          "Range": [
+            0.1,
+            1.0
+          ],
+          "SystemType": "float"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": true,
+    "Name": "ar_coefficient",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "coeff",
+              "Type": {
+                "Range": [
+                  0,
+                  0
+                ],
+                "SystemType": "int"
+              }
+            },
+            {
+              "Name": "k",
+              "Type": {
+                "Range": [
+                  0,
+                  0
+                ],
+                "SystemType": "int"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "pandas.Series"
+  },
+  {
+    "Enabled": true,
+    "Name": "augmented_dickey_fuller",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "attr",
+              "Type": {
+                "Range": [
+                  "teststat",
+                  "pvalue",
+                  "usedlag"
+                ],
+                "SystemType": "string"
+              }
+            },
+            {
+              "Name": "autolag",
+              "Type": {
+                "Range": [
+                  "AIC",
+                  "BIC",
+                  "t-stats"
+                ],
+                "SystemType": "string"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": true,
+    "Name": "autocorrelation",
+    "InputParameters": [
+      {
+        "Name": "lag",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "benford_correlation",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "binned_entropy",
+    "InputParameters": [
+      {
+        "Name": "max_bins",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "c3",
+    "InputParameters": [
+      {
+        "Name": "lag",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "change_quantiles",
+    "InputParameters": [
+      {
+        "Name": "ql",       
+        "Type": {
+          "DefaultValue": 0.23,
+          "Range": [
+            0.0,
+            0.49
+          ],
+          "SystemType": "float"
+        }
+      },
+      {
+        "Name": "qh",
+        "Type": {
+          "DefaultValue": 0.75,
+          "Range": [
+            0.5,
+            1.0
+          ],
+          "SystemType": "float"
+        }
+      },
+      {
+        "Name": "isabs",
+        "Type": {
+          "SystemType": "bool"
+        }
+      },
+      {
+        "Name": "f_agg",
+        "Type": {
+          "Range": [
+            "mean",
+            "std",
+            "var",
+            "median"
+          ],
+          "SystemType": "string"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "cid_ce",
+    "InputParameters": [
+      {
+        "Name": "normalize",
+        "Type": {
+          "SystemType": "bool"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": true,
+    "Name": "count_above",
+    "InputParameters": [
+      {
+        "Name": "t",
+        "Type": {
+          "Range": [
+            0.0,
+            0.0
+          ],
+          "SystemType": "float"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "count_above_mean",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "count_below",
+    "InputParameters": [
+      {
+        "Name": "t",
+        "Type": {
+          "Range": [
+            0.0,
+            0.0
+          ],
+          "SystemType": "float"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "count_below_mean",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "cwt_coefficients",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "widths",
+              "Type": {
+                "ElementType": "int",
+                "ArrayOfMyType": null,
+                "SystemType": null
+              }
+            },
+            {
+              "Name": "coeff",
+              "Type": {
+                "Range": [
+                  0,
+                  0
+                ],
+                "SystemType": "int"
+              }
+            },
+            {
+              "Name": "w",
+              "Type": {
+                "Range": [
+                  0,
+                  0
+                ],
+                "SystemType": "int"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "pandas.Series"
+  },
+  {
+    "Enabled": false,
+    "Name": "energy_ratio_by_chunks",
+    "InputParameters": [],
+    "ReturnType": "list"
+  },
+  {
+    "Enabled": false,
+    "Name": "fft_aggregated",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "aggtype",
+              "Type": {
+                "Range": [
+                  "centroid",
+                  "variance",
+                  "skew",
+                  "kurtosis"
+                ],
+                "SystemType": "string"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "pandas.Series"
+  },
+  {
+    "Enabled": false,
+    "Name": "fft_coefficient",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "coeff",
+              "Type": {
+                "Range": [
+                  0,
+                  2147483647
+                ],
+                "SystemType": "int"
+              }
+            },
+            {
+              "Name": "attr",
+              "Type": {
+                "Range": [
+                  "real",
+                  "imag",
+                  "abs",
+                  "angle",
+                  "real",
+                  "imag), the absolute value (attr=",
+                  "abs) and the angle in degrees (attr=="
+                ],
+                "SystemType": "string"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "pandas.Series"
+  },
+  {
+    "Enabled": false,
+    "Name": "first_location_of_maximum",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "first_location_of_minimum",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "fourier_entropy",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "friedrich_coefficients",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "m",
+              "Type": {
+                "Range": [
+                  0,
+                  2147483647
+                ],
+                "SystemType": "int"
+              }
+            },
+            {
+              "Name": "r",
+              "Type": {
+                "Range": [
+                  0.0,
+                  3.40282347E+38
+                ],
+                "SystemType": "float"
+              }
+            },
+            {
+              "Name": "coeff",
+              "Type": {
+                "Range": [
+                  0.0,
+                  3.40282347E+38
+                ],
+                "SystemType": "float"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "pandas.Series"
+  },
+  {
+    "Enabled": false,
+    "Name": "has_duplicate",
+    "InputParameters": [],
+    "ReturnType": "bool"
+  },
+  {
+    "Enabled": false,
+    "Name": "has_duplicate_max",
+    "InputParameters": [],
+    "ReturnType": "bool"
+  },
+  {
+    "Enabled": false,
+    "Name": "has_duplicate_min",
+    "InputParameters": [],
+    "ReturnType": "bool"
+  },
+  {
+    "Enabled": false,
+    "Name": "index_mass_quantile",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "q",
+              "Type": {
+                "Range": [
+                  0.0,
+                  0.0
+                ],
+                "SystemType": "float"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "pandas.Series"
+  },
+  {
+    "Enabled": false,
+    "Name": "kurtosis",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "large_standard_deviation",
+    "InputParameters": [
+      {
+        "Name": "r",
+        "Type": {
+          "Range": [
+            0.0,
+            1.0
+          ],
+          "SystemType": "float"
+        }
+      }
+    ],
+    "ReturnType": "bool"
+  },
+  {
+    "Enabled": false,
+    "Name": "last_location_of_maximum",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "last_location_of_minimum",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "lempel_ziv_complexity",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "length",
+    "InputParameters": [],
+    "ReturnType": "int"
+  },
+  {
+    "Enabled": false,
+    "Name": "linear_trend",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "attr",
+              "Type": {
+                "Range": [],
+                "SystemType": "string"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "pandas.Series"
+  },
+  {
+    "Enabled": false,
+    "Name": "linear_trend_timewise",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "attr",
+              "Type": {
+                "Range": [],
+                "SystemType": "string"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "list"
+  },
+  {
+    "Enabled": false,
+    "Name": "longest_strike_above_mean",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "longest_strike_below_mean",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "max_langevin_fixed_point",
+    "InputParameters": [
+      {
+        "Name": "m",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      },
+      {
+        "Name": "r",
+        "Type": {
+          "Range": [
+            0.0,
+            0.0
+          ],
+          "SystemType": "float"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "maximum",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": true,
+    "Name": "mean",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "mean_abs_change",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "mean_change",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "mean_n_absolute_max",
+    "InputParameters": [
+      {
+        "Name": "number_of_maxima",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "mean_second_derivative_central",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "median",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "minimum",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "number_crossing_m",
+    "InputParameters": [
+      {
+        "Name": "m",
+        "Type": {
+          "Range": [
+            0.0,
+            0.0
+          ],
+          "SystemType": "float"
+        }
+      }
+    ],
+    "ReturnType": "int"
+  },
+  {
+    "Enabled": false,
+    "Name": "number_cwt_peaks",
+    "InputParameters": [
+      {
+        "Name": "n",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      }
+    ],
+    "ReturnType": "int"
+  },
+  {
+    "Enabled": false,
+    "Name": "number_peaks",
+    "InputParameters": [
+      {
+        "Name": "n",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "partial_autocorrelation",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "lag",
+              "Type": {
+                "Range": [
+                  0,
+                  0
+                ],
+                "SystemType": "int"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "percentage_of_reoccurring_datapoints_to_all_datapoints",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "percentage_of_reoccurring_values_to_all_values",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "permutation_entropy",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "quantile",
+    "InputParameters": [
+      {
+        "Name": "q",
+        "Type": {
+          "Range": [
+            0.0,
+            0.0
+          ],
+          "SystemType": "float"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "range_count",
+    "InputParameters": [
+      {
+        "Name": "min",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      },
+      {
+        "Name": "max",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      }
+    ],
+    "ReturnType": "int"
+  },
+  {
+    "Enabled": false,
+    "Name": "ratio_beyond_r_sigma",
+    "InputParameters": [
+      {
+        "Name": "r",
+        "Type": {
+          "Range": [
+            0.0,
+            0.0
+          ],
+          "SystemType": "float"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "ratio_value_number_to_time_series_length",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "root_mean_square",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "sample_entropy",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "set_property",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "skewness",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "spkt_welch_density",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "coeff",
+              "Type": {
+                "Range": [
+                  0,
+                  0
+                ],
+                "SystemType": "int"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "pandas.Series"
+  },
+  {
+    "Enabled": false,
+    "Name": "standard_deviation",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "sum_of_reoccurring_data_points",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "sum_of_reoccurring_values",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "sum_values",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "symmetry_looking",
+    "InputParameters": [
+      {
+        "Name": "param",
+        "Type": {
+          "PropertyList": [
+            {
+              "Name": "r",
+              "Type": {
+                "Range": [
+                  0.0,
+                  1.0
+                ],
+                "SystemType": "float"
+              }
+            }
+          ],
+          "SystemType": "dictionary"
+        }
+      }
+    ],
+    "ReturnType": "bool"
+  },
+  {
+    "Enabled": false,
+    "Name": "time_reversal_asymmetry_statistic",
+    "InputParameters": [
+      {
+        "Name": "lag",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      }
+    ],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "value_count",
+    "InputParameters": [
+      {
+        "Name": "value",
+        "Type": {
+          "Range": [
+            0,
+            0
+          ],
+          "SystemType": "int"
+        }
+      }
+    ],
+    "ReturnType": "int"
+  },
+  {
+    "Enabled": false,
+    "Name": "variance",
+    "InputParameters": [],
+    "ReturnType": "float"
+  },
+  {
+    "Enabled": false,
+    "Name": "variance_larger_than_standard_deviation",
+    "InputParameters": [],
+    "ReturnType": "bool"
+  },
+  {
+    "Enabled": false,
+    "Name": "variation_coefficient",
+    "InputParameters": [],
+    "ReturnType": "float"
+  }
+]
