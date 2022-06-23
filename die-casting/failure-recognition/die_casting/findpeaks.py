@@ -1,14 +1,20 @@
+# -*- coding: utf-8 -*-
 """
 Created on Wed Jun 22 10:25:29 2022
 
 @author: Noske
 """
 
+# find peaks
+
+#Number of dominant peaks to find
 import numpy as np
 from scipy import fft
 from scipy.fftpack import fftfreq
 
-def find_peaks(train_data, number_peaks = 5, Num_Pro = 5):
+def find_peaks(train_data, number_peaks = 5):
+
+    number_peaks = 5
     dom_peaks_freq = []
     dom_peaks_ampl = []
 
