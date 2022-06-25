@@ -29,9 +29,10 @@ source .venv/bin/activate
 ```
 
 
-## How to install packages
+## How to install subpackages
 
 I) Create + activate a virtual environment within a subpackage (containing a setup.py) (see https://packaging.python.org/en/latest/guides/packaging-namespace-packages/)
+
 II) To install that subpackage run:
 ```bash
 pip install -e .
