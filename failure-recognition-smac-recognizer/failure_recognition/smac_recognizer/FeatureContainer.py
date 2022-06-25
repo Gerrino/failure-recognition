@@ -6,6 +6,7 @@ Created on Wed Aug 11 11:59:26 2021
 @author: gerritnoske
 """
 import json
+from typing import List
 from Feature import Feature
 from tsfresh.utilities.dataframe_functions import impute
 from tsfresh import extract_features
@@ -14,14 +15,17 @@ import datetime
 #Feature class, e.g. agg_autocorrleation
 
 class FeatureContainer:
+
+
     def __init__(self):
         self.Incumbent = {}
         self.FeatureState = {}
-        self.FeatureList = []
+        self.FeatureList: List[Feature] = []
         self.History =  pd.DataFrame({'datetime': [datetime.datetime.now()], 'timespan': [datetime.timedelta(0)], 'action': ["startup"], "orig-value": [0], "opt-value": [0]})
+
     def __str__(self):
         return f"Feature Container with {len(self.FeatureList)} elements"
-  
+
     def columnUpdate(self, newSensorState):
         """
         adds columns from newDFState that do not exist in FeatureState to FeatureState.
@@ -30,27 +34,27 @@ class FeatureContainer:
         if len(newSensorState) == 0:
             return
         if len(self.FeatureState) == 0:
-            self.FeatureState = {};
+            self.FeatureState = {}
             self.FeatureState = newSensorState
             return
-        #if not sensor in self.FeatureState:           
-           # self.FeatureState = newSensorState           
+        #if not sensor in self.FeatureState:
+           # self.FeatureState = newSensorState
            # return
         old_cols = len(self.FeatureState.columns)
 
         for col2_name in filter(lambda c2: (c2 in self.FeatureState.columns), newSensorState.columns):
-            del self.FeatureState[col2_name]   
+            del self.FeatureState[col2_name]
         for col2_name in filter(lambda c2: not c2 in self.FeatureState.columns, newSensorState.columns):
             self.FeatureState = pd.concat([self.FeatureState, newSensorState[col2_name]], 1)
-        print(f"update with {old_cols} => {len(self.FeatureState.columns)}")       
-    
+        print(f"update with {old_cols} => {len(self.FeatureState.columns)}")
+
     def load(self, path):
         tsfreshlist = open(path)
         objectList = json.loads(tsfreshlist.read(),)
-        for obj in objectList:       
+        for obj in objectList:
             feat = Feature(obj)
-            self.FeatureList.append(feat)        
-    
+            self.FeatureList.append(feat)
+
     def registerHyperparameters(self, cs, sensors):
         for sensor in sensors:
             for f  in filter(lambda f: f.Enabled, self.FeatureList):
@@ -58,10 +62,10 @@ class FeatureContainer:
                     hyp = i.GetHyperParameterList(sensor)
                     print(f"Added Hyper Parameter: {hyp}")
                     cs.add_hyperparameters(hyp)
-                
+
     def resetFeatureState(self):
         self.FeatureState = {}
-        
+
     def computeFeatureState(self, timeseries, cfg = None, computeForAllFeatures = False):
         """
         Computes the feature matrix for sensor and the incumbent configuration.
@@ -77,11 +81,10 @@ class FeatureContainer:
             X = impute(x)
             self.columnUpdate(X)
 
-
     def GetFeatureDictionary(self, sensors, cfg = None, useDefaultValues = True) -> dict:
         """
-        This method returns a dictionary providing information of all features per sensor and their hyperparameters 
-        (including the incumbent hyperparameter values).   
+        This method returns a dictionary providing information of all features per sensor and their hyperparameters
+        (including the incumbent hyperparameter values).
         cfg given: get feature dict for all features with at least one hyperparam.
         cfg not given: get feature dict for all features (use default values for features with hyperparameters)
         """
