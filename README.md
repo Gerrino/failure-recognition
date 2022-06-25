@@ -8,6 +8,7 @@ Repository for recognizing failures in machining
 
 ```bash
 git clone https://github.com/Gerrino/failure-recognition.git
+cd failure-recognition
 git pull
 ```
 
