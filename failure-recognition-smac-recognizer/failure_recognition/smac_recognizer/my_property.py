@@ -1,11 +1,6 @@
 """Moudle providing the MyProperty class"""
 
 from typing import List
-from ConfigSpace.hyperparameters import (
-    CategoricalHyperparameter,
-    UniformFloatHyperparameter,
-    UniformIntegerHyperparameter,
-)
 from failure_recognition.smac_recognizer import (
     DEFAULT_FLOAT,
     DEFAULT_INT,
@@ -66,10 +61,11 @@ class MyProperty:
             return {self.name: self.get_default_value()}
 
     def get_hyper_parameter_list(self, sensor) -> list:
+        import ConfigSpace.hyperparameters as smac_params
         default_val = self.get_default_value()
         if self.type.system_type == "int":
             return [
-                UniformIntegerHyperparameter(
+                smac_params.UniformIntegerHyperparameter(
                     self.get_id(sensor),
                     self.get_range(0),
                     self.get_range(1),
@@ -77,10 +73,10 @@ class MyProperty:
                 )
             ]
         if self.type.system_type == "string":
-            return [CategoricalHyperparameter(self.get_id(sensor), self.type.range, self.type.range[0])]
+            return [smac_params.CategoricalHyperparameter(self.get_id(sensor), self.type.range, self.type.range[0])]
         if self.type.system_type == "float":
             return [
-                UniformFloatHyperparameter(
+                smac_params.UniformFloatHyperparameter(
                     self.get_id(sensor),
                     self.get_range(0),
                     self.get_range(1),
@@ -88,7 +84,7 @@ class MyProperty:
                 )
             ]
         if self.type.system_type == "bool":
-            return [UniformIntegerHyperparameter(self.get_id(sensor), 0, 1, default_value=0)]
+            return [smac_params.UniformIntegerHyperparameter(self.get_id(sensor), 0, 1, default_value=0)]
         if self.type.system_type == "dictionary":
             hyper_parameters_of_dict = []
             for p in self.type.property_list:
