@@ -1,7 +1,7 @@
 """Module providing the feature class"""
 
 from typing import List
-from my_property import MyProperty
+from failure_recognition.signal_processing.my_property import MyProperty
 
 
 class Feature:
