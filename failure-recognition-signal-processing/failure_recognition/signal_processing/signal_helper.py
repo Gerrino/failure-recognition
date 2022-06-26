@@ -105,6 +105,8 @@ class FindPeaksMode(Enum):
     DISTANCE = {"name": "distance", "pos_slope":False, "range": [1, None]}
     THRESHOLD = {"name": "threshold", "pos_slope":False, "range": [0, None]}
 
+def test_this(ts):
+    ...
 
 def get_fft(ts: float, signal_t: np_typing.ArrayLike, f_min: float = None, f_max: float = None) -> Tuple[np_typing.ArrayLike, np_typing.ArrayLike]:
     """Get the fft of the given signal
