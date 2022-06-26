@@ -30,7 +30,7 @@ import datetime
 def registerDecisionTreeHyperparams(cs):
     num_trees = UniformIntegerHyperparameter("num_trees", 10, 50, default_value=10)
     min_weight_frac_leaf = UniformFloatHyperparameter("min_weight_frac_leaf", 0.0, 0.5, default_value=0.0)
-    criterion = CategoricalHyperparameter("criterion", ["mse", "mae"], default_value="mse")
+    criterion = CategoricalHyperparameter("criterion", ["squared_error", "absolute_error"], default_value="squared_error")
     min_samples_to_split = UniformIntegerHyperparameter("min_samples_to_split", 2, 20, default_value=2)
     min_samples_in_leaf = UniformIntegerHyperparameter("min_samples_in_leaf", 1, 20, default_value=1)
     max_leaf_nodes = UniformIntegerHyperparameter("max_leaf_nodes", 10, 1000, default_value=100)

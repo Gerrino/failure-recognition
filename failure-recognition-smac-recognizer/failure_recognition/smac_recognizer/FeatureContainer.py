@@ -23,7 +23,7 @@ class FeatureContainer:
 
     def __init__(self):
         self.Incumbent = {}
-        self.FeatureState: pd.DataFrame = None
+        self.FeatureState: pd.DataFrame = pd.DataFrame()
         self.FeatureList: List[Feature] = []
         self.History = pd.DataFrame(
             {
@@ -57,7 +57,7 @@ class FeatureContainer:
         for col2_name in filter(lambda c2: (c2 in self.FeatureState.columns), newSensorState.columns):
             del self.FeatureState[col2_name]
         for col2_name in filter(lambda c2: not c2 in self.FeatureState.columns, newSensorState.columns):
-            self.FeatureState = pd.concat([self.FeatureState, newSensorState[col2_name]], 1)
+            self.FeatureState = pd.concat([self.FeatureState, newSensorState[col2_name]], axis=1)
         print(f"update with {old_cols} => {len(self.FeatureState.columns)}")
 
     def load(self, path: Union[Path, str]):
@@ -80,7 +80,7 @@ class FeatureContainer:
     def resetFeatureState(self):
         self.FeatureState = {}
 
-    def computeFeatureState(self, timeseries: pd.DataFrame, cfg: dict = None, computeForAllFeatures=False):
+    def computeFeatureState(self, timeseries: pd.DataFrame, cfg: dict = None, computeForAllFeatures: bool = False):
         """
         Computes the feature matrix for sensor and the incumbent configuration.
         Attention: Changes within "rf_from_cfg" are'nt persistent.
