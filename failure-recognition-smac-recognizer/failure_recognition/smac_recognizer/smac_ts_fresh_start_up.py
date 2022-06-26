@@ -15,7 +15,7 @@ y = pd.read_csv(PATH_DICT["label"], decimal=".", sep=",", header=None)
 y = y.iloc[:, 0]
 
 test_settings.index += 1
-(incumbent, feature_container) = SmacTsfresh.smac_tsfresh_window_opt(
+(incumbent, feature_container) = smac_tsfresh.smac_tsfresh_window_opt(
     timeseries,
     test_settings,
     y,
@@ -28,7 +28,7 @@ test_settings.index += 1
 )
 featureState = feature_container.feature_state
 history = feature_container.history.reset_index()
-y_pred, importances = RandomForestFromCFG.get_prediction(
+y_pred, importances = random_forest_from_cfg.get_prediction(
     incumbent,
     np.random.RandomState(42),
     feature_container,

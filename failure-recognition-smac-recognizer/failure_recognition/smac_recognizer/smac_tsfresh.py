@@ -19,7 +19,7 @@ from ConfigSpace.hyperparameters import (
 from smac.configspace import ConfigurationSpace
 from smac.facade.smac_hpo_facade import SMAC4HPO
 from smac.scenario.scenario import Scenario
-import random_forest_from_cfg
+from random_forest_from_cfg import rf_from_cfg_extended
 from smac.initial_design.latin_hypercube_design import LHDesign
 from feature_container import FeatureContainer
 import pandas as pd
@@ -93,7 +93,7 @@ def create_smac(
     window_size_ratio,
 ) -> SMAC4HPO:
     rf_from_cfg = lambda cfg, seed: (
-        RandomForestFromCFG.rf_from_cfg_extended(
+        rf_from_cfg_extended(
             cfg, seed, timeseries, test_settings, y, feature_container, window_size_ratio
         )
     )

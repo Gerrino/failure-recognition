@@ -8,10 +8,10 @@ DEFAULT_INT = 1
 DEFAULT_FLOAT = 0.1
 
 PATH_DICT = {
-    "features": "/home/gerritnoske/Documents/Projekt_Henne/tsfreshlist.txt",
-    "timeSeries": "/home/gerritnoske/Documents/Projekt_Henne/NASA_tsfresh_format_all.csv",
-    "label": "/home/gerritnoske/Documents/Projekt_Henne/label.csv",
-    "testSettings": "/home/gerritnoske/Documents/Projekt_Henne/testsettings.csv",
+    "features": "./examples/tsfreshlist.txt",
+    "timeSeries": "./examples/NASA_tsfresh_format_all.csv",
+    "label": "./examples/label.csv",
+    "testSettings": "./examples/testsettings.csv",
 }
 
 SCENARIO_DICT = {
