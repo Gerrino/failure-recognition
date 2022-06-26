@@ -19,25 +19,32 @@ import pandas as pd
 from failure_recognition.signal_processing.feature_container import FeatureContainer
 
 
-def rf_from_cfg_extended(cfg, seed, timeseries: pd.DataFrame, test_settings: pd.DataFrame, y: pd.DataFrame,
-                         feature_container: FeatureContainer, window_size_ratio: float):
+def rf_from_cfg_extended(
+    cfg,
+    seed,
+    timeseries: pd.DataFrame,
+    test_settings: pd.DataFrame,
+    y: pd.DataFrame,
+    feature_container: FeatureContainer,
+    window_size_ratio: float,
+):
     """
-        Creates a random forest regressor from sklearn and fits the given data on it.
-        This is the function-call we try to optimize. Chosen values are stored in
-        the configuration (cfg).vnc
+    Creates a random forest regressor from sklearn and fits the given data on it.
+    This is the function-call we try to optimize. Chosen values are stored in
+    the configuration (cfg).vnc
 
-        Parameters:
-        -----------
-        cfg: Configuration
-            configuration chosen by smac
-        seed: int or RandomState
-            used to initialize the rf's random generator
+    Parameters:
+    -----------
+    cfg: Configuration
+        configuration chosen by smac
+    seed: int or RandomState
+        used to initialize the rf's random generator
 
-        Returns:
-        -----------
-        np.mean(rmses): float
-            mean of root mean square errors of random-forest test predictions
-            per cv-fold
+    Returns:
+    -----------
+    np.mean(rmses): float
+        mean of root mean square errors of random-forest test predictions
+        per cv-fold
     """
     max_time = max(timeseries["time"])
     window_size = window_size_ratio * max_time
@@ -65,15 +72,23 @@ def rf_from_cfg_extended(cfg, seed, timeseries: pd.DataFrame, test_settings: pd.
     print(f"size of windowedTimeSeries {len(windowed_time_series)}")
     print(
         f"Size {cfg['window_size_percent']} Duration {round(duration)}s, window_left:{window_left}, "
-        f"window_right:{window_right}/{max_time}")
+        f"window_right:{window_right}/{max_time}"
+    )
     print("**")
     cost = -1 * np.mean(score)  # + 0.01 * duration
     return cost  # Because cross_validation sign-flips the score
 
 
-def get_prediction(cfg: dict, seed: int, feature_container: FeatureContainer, x_train: pd.DataFrame,
-                   test_settings_train: pd.DataFrame, y_train: pd.DataFrame, x_test: pd.DataFrame,
-                   test_settings_test: pd.DataFrame):
+def get_prediction(
+    cfg: dict,
+    seed: int,
+    feature_container: FeatureContainer,
+    x_train: pd.DataFrame,
+    test_settings_train: pd.DataFrame,
+    y_train: pd.DataFrame,
+    x_test: pd.DataFrame,
+    test_settings_test: pd.DataFrame,
+):
     rfr = get_rfr(cfg, seed)
     feature_container.reset_feature_state()
     feature_container.compute_feature_state(x_train, cfg, compute_for_all_features=True)
@@ -99,6 +114,6 @@ def get_rfr(cfg: dict, seed: int):
             # max_features=cfg["max_features"],
             max_leaf_nodes=cfg["max_leaf_nodes"],
             bootstrap=cfg["do_bootstrapping"],
-            random_state=seed
-        )
+            random_state=seed,
+        ),
     )

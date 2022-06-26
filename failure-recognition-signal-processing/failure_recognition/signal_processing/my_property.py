@@ -62,6 +62,7 @@ class MyProperty:
 
     def get_hyper_parameter_list(self, sensor) -> list:
         import ConfigSpace.hyperparameters as smac_params
+
         default_val = self.get_default_value()
         if self.type.system_type == "int":
             return [
