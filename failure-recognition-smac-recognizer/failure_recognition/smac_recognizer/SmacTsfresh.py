@@ -42,8 +42,8 @@ def registerDecisionTreeHyperparams(cs, incumbent: dict = None):
     )
     criterion = CategoricalHyperparameter(
         "criterion",
-        ["mse", "mae"],
-        default_value=incumbent["criterion"] if "criterion" in incumbent else "mse",
+        ["squared_error", "absolute_error"],
+        default_value=incumbent["criterion"] if "criterion" in incumbent else "squared_error",
     )
     min_samples_to_split = UniformIntegerHyperparameter(
         "min_samples_to_split",

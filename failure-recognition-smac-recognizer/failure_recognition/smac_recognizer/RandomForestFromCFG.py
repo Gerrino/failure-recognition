@@ -16,8 +16,10 @@ import numpy as np
 import time
 import pandas as pd
 
+from failure_recognition.smac_recognizer.FeatureContainer import FeatureContainer
 
-def rf_from_cfg_extended(cfg, seed, timeseries, testSettings, y, feature_container, window_size_ratio):
+
+def rf_from_cfg_extended(cfg, seed, timeseries: pd.DataFrame, testSettings: pd.DataFrame, y: pd.DataFrame, feature_container: FeatureContainer, window_size_ratio: float):
     """
         Creates a random forest regressor from sklearn and fits the given data on it.
         This is the function-call we try to optimize. Chosen values are stored in
@@ -51,7 +53,7 @@ def rf_from_cfg_extended(cfg, seed, timeseries, testSettings, y, feature_contain
 
     # Creating root mean square error for sklearns crossvalidation
     rmse_scorer = make_scorer(rmse, greater_is_better=False)
-    feature_matrix = pd.concat([feature_container.FeatureState, testSettings], 1)
+    feature_matrix = pd.concat([feature_container.FeatureState, testSettings], axis=1)
     print("Len Featmat" + str(len(feature_matrix)))
     score = cross_val_score(rfr, feature_matrix, y, cv=10, scoring=rmse_scorer)
     duration = time.time() - startTime
@@ -67,21 +69,21 @@ def rf_from_cfg_extended(cfg, seed, timeseries, testSettings, y, feature_contain
     return cost  # Because cross_validation sign-flips the score
 
 
-def getPrediction(cfg, seed, feature_container, x_train, testSettings_train, y_train, x_test, testSettings_test):
+def getPrediction(cfg: dict, seed: int, feature_container: FeatureContainer, x_train: pd.DataFrame, testSettings_train: pd.DataFrame, y_train: pd.DataFrame, x_test: pd.DataFrame, testSettings_test: pd.DataFrame):
     rfr = getRFR(cfg, seed)
     feature_container.resetFeatureState()
     feature_container.computeFeatureState(x_train, cfg, computeForAllFeatures=True)
-    feature_matrix_train = pd.concat([feature_container.FeatureState, testSettings_train], 1)
+    feature_matrix_train = pd.concat([feature_container.FeatureState, testSettings_train], axis=1)
     rfr.fit(feature_matrix_train, y_train)
     feature_container.resetFeatureState()
     feature_container.computeFeatureState(x_test, cfg, computeForAllFeatures=True)
-    feature_matrix_test = pd.concat([feature_container.FeatureState, testSettings_test], 1)
+    feature_matrix_test = pd.concat([feature_container.FeatureState, testSettings_test], axis=1)
     y_pred = rfr.predict(feature_matrix_test)
     importances = rfr.steps[1][1].feature_importances_
     return y_pred, importances
 
 
-def getRFR(cfg, seed):
+def getRFR(cfg: dict, seed: int):
     return make_pipeline(
         StandardScaler(),
         RandomForestRegressor(
