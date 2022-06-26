@@ -16,14 +16,14 @@ from smac.configspace import ConfigurationSpace
 from smac.configspace import InCondition
 from smac.facade.smac_hpo_facade import SMAC4HPO
 from smac.scenario.scenario import Scenario
-import RandomForestFromCFG
+import random_forest_from_cfg
 from tsfresh.utilities.dataframe_functions import impute
 from smac.initial_design.latin_hypercube_design import LHDesign
 import pandas as pd
 from tsfresh import extract_features
 from tsfresh import feature_extraction
 from itertools import islice
-from FeatureContainer import FeatureContainer
+from feature_container import FeatureContainer
 import datetime
 
 
@@ -38,11 +38,11 @@ def registerDecisionTreeHyperparams(cs):
                             min_samples_to_split, min_samples_in_leaf, max_leaf_nodes])
 
 
-def CreateSmac(cs, sensor, timeseries, y, featureContainer, scenarioDict) -> SMAC4HPO:
+def CreateSmac(cs, sensor, timeseries, y, feature_container, scenario_dict) -> SMAC4HPO:
     rf_from_cfg = lambda cfg, seed: (
-        RandomForestFromCFG.rf_from_cfg_extended(cfg, seed, "0", timeseries, y, featureContainer))
-    scenarioDict["cs"] = cs
-    scenario = Scenario(scenarioDict)
+        RandomForestFromCFG.rf_from_cfg_extended(cfg, seed, "0", timeseries, y, feature_container))
+    scenario_dict["cs"] = cs
+    scenario = Scenario(scenario_dict)
     # To optimize, we pass the function to the SMAC-object
     smac = SMAC4HPO(scenario=scenario,
                     rng=np.random.RandomState(42),
@@ -56,12 +56,12 @@ def LoadFeatureContainer(path_feat_list):
     featureContainer = FeatureContainer()
     featureContainer.load(path_feat_list)
     print()
-    print(f"There are {sum(1 for f in featureContainer.FeatureList if f.Enabled)} enabled Features!")
+    print(f"There are {sum(1 for f in featureContainer.feature_list if f.enabled)} enabled Features!")
     print("Features with parameters:")
-    print(f"   {', '.join(f.Name for f in featureContainer.FeatureList if f.Enabled and len(f.InputParameters) > 0)}")
+    print(f"   {', '.join(f.name for f in featureContainer.feature_list if f.enabled and len(f.input_parameters) > 0)}")
     print("Features without parameters:")
     print(
-        f"   clear{', '.join(f.Name for f in featureContainer.FeatureList if f.Enabled and len(f.InputParameters) == 0)}")
+        f"   clear{', '.join(f.name for f in featureContainer.feature_list if f.enabled and len(f.input_parameters) == 0)}")
     print()
     return featureContainer
 
@@ -78,14 +78,14 @@ def registerLogger():
 def createConfigurationSpace(featureContainer):
     cs = ConfigurationSpace()
     registerDecisionTreeHyperparams(cs)
-    featureContainer.registerHyperparameters(cs)
+    featureContainer.register_hyperparameters(cs)
     return cs
 
 
 def Smac_tsfresh_optimize(timeseries, y, featureContainer, scenarioDict):
-    featureList = featureContainer.FeatureList
+    featureList = featureContainer.feature_list
     # dateTimeOptStart = datetime.now()
-    numOptFeat = sum(1 for f in featureList if f.Enabled and len(f.InputParameters) > 0)
+    numOptFeat = sum(1 for f in featureList if f.enabled and len(f.input_parameters) > 0)
     # nameOptFeat = ''#', '.join(f.Name for f in featureContainer.FeatureList if f.Enabled)
     cs = createConfigurationSpace(featureContainer)
     smac = CreateSmac(cs, "0", timeseries, y, featureContainer, scenarioDict)
@@ -99,7 +99,7 @@ def Smac_tsfresh_optimize(timeseries, y, featureContainer, scenarioDict):
     print("Optimized Value: %.2f" % inc_value)
     # newHistoryRow = pd.DataFrame({'datetime': datetime.now(), 'timespan': datetime.now() - dateTimeOptStart, 'action': f"Optimize {nameOptFeat}", 'opt-value': inc_value})
     # featureContainer.History.append(newHistoryRow)
-    featureContainer.computeFeatureState("0", timeseries, incumbent)  # get parameterless feature matrix
+    featureContainer.compute_feature_state("0", timeseries, incumbent)  # get parameterless feature matrix
     return incumbent
 
 
@@ -107,9 +107,9 @@ def smac_tsfresh_window_opt(timeseries, y, pathDict, scenarioDict, window_size, 
     print(f"Starting Optimization window_size: {window_size}, overlap: {overlap}")
     featureContainer = LoadFeatureContainer(pathDict["features"])
     print("Compute feature state for parameterless features")
-    featureContainer.computeFeatureState("0", timeseries, cfg=None)  # get parameterless feature matrix
-    featureList = featureContainer.FeatureList
-    enabledFeatures = list(filter(lambda f: f.Enabled and len(f.InputParameters) > 0, featureContainer.FeatureList))
+    featureContainer.compute_feature_state("0", timeseries, cfg=None)  # get parameterless feature matrix
+    featureList = featureContainer.feature_list
+    enabledFeatures = list(filter(lambda f: f.enabled and len(f.input_parameters) > 0, featureContainer.feature_list))
     enabled_feature_count = len(enabledFeatures)
     incr = window_size - overlap
     if incr <= 0:
@@ -121,20 +121,20 @@ def smac_tsfresh_window_opt(timeseries, y, pathDict, scenarioDict, window_size, 
     it = 1
     incumbent = {}
     while window_start_pntr < enabled_feature_count:
-        for f in filter(lambda f: f.Enabled, featureList):
-            f.Enabled = False
+        for f in filter(lambda f: f.enabled, featureList):
+            f.enabled = False
         cur_window = [window_start_pntr, min(window_start_pntr + window_size - 1, enabled_feature_count - 1)]
         for i, item in enumerate(enabledFeatures):
             if i >= cur_window[0] and i <= cur_window[1] and item in enabledFeatures:
-                item.Enabled = True
+                item.enabled = True
             else:
-                item.Enabled = False
+                item.enabled = False
         print()
         print(f"Iteration {it}/{tot_it}")
-        print('|'.join('█' if f.Enabled else '░' for f in
-                       enabledFeatures) + f" -> {', '.join(f.Name for f in featureContainer.FeatureList if f.Enabled)}")
+        print('|'.join('█' if f.enabled else '░' for f in
+                       enabledFeatures) + f" -> {', '.join(f.name for f in featureContainer.feature_list if f.enabled)}")
         print()
         window_start_pntr += incr
         it += 1
         incumbent.update(Smac_tsfresh_optimize(timeseries, y, featureContainer, scenarioDict))
-    return incumbent, featureContainer.FeatureState
+    return incumbent, featureContainer.feature_state

@@ -2,41 +2,41 @@
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import SmacTsfresh
-from failure_recognition.smac_recognizer import PATH_DICT, SCENARIODICT
+import smac_tsfresh
+from failure_recognition.smac_recognizer import PATH_DICT, SCENARIO_DICT
 from smac.scenario.scenario import Scenario
 import numpy as np
-import RandomForestFromCFG
+import random_forest_from_cfg
 
 plt.close("all")
 timeseries = pd.read_csv(PATH_DICT["timeSeries"], decimal=".", sep=",", header=0)
-testSettings = pd.read_csv(PATH_DICT["testSettings"], decimal=".", sep=",", header=0)
+test_settings = pd.read_csv(PATH_DICT["testSettings"], decimal=".", sep=",", header=0)
 y = pd.read_csv(PATH_DICT["label"], decimal=".", sep=",", header=None)
 y = y.iloc[:, 0]
 
-testSettings.index += 1
-(incumbent, featureContainer) = SmacTsfresh.smac_tsfresh_window_opt(
+test_settings.index += 1
+(incumbent, feature_container) = SmacTsfresh.smac_tsfresh_window_opt(
     timeseries,
-    testSettings,
+    test_settings,
     y,
     PATH_DICT,
-    SCENARIODICT,
+    SCENARIO_DICT,
     window_size=2,
     overlap=0,
     seed=np.random.RandomState(42),
     window_size_ratio=0.2,
 )
-featureState = featureContainer.FeatureState
-history = featureContainer.History.reset_index()
-y_pred, importances = RandomForestFromCFG.getPrediction(
+featureState = feature_container.feature_state
+history = feature_container.history.reset_index()
+y_pred, importances = RandomForestFromCFG.get_prediction(
     incumbent,
     np.random.RandomState(42),
-    featureContainer,
+    feature_container,
     timeseries,
-    testSettings,
+    test_settings,
     y,
     timeseries.query("id <= 50"),
-    testSettings[:50],
+    test_settings[:50],
 )
 
 optDF = pd.DataFrame(history, columns=["opt-value"])

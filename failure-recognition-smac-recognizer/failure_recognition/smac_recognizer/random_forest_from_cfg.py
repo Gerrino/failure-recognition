@@ -16,10 +16,11 @@ import numpy as np
 import time
 import pandas as pd
 
-from failure_recognition.smac_recognizer.FeatureContainer import FeatureContainer
+from failure_recognition.smac_recognizer.feature_container import FeatureContainer
 
 
-def rf_from_cfg_extended(cfg, seed, timeseries: pd.DataFrame, testSettings: pd.DataFrame, y: pd.DataFrame, feature_container: FeatureContainer, window_size_ratio: float):
+def rf_from_cfg_extended(cfg, seed, timeseries: pd.DataFrame, test_settings: pd.DataFrame, y: pd.DataFrame,
+                         feature_container: FeatureContainer, window_size_ratio: float):
     """
         Creates a random forest regressor from sklearn and fits the given data on it.
         This is the function-call we try to optimize. Chosen values are stored in
@@ -38,52 +39,55 @@ def rf_from_cfg_extended(cfg, seed, timeseries: pd.DataFrame, testSettings: pd.D
             mean of root mean square errors of random-forest test predictions
             per cv-fold
     """
-    maxTime = max(timeseries["time"])
-    windowSize = window_size_ratio * maxTime  # cfg["windowSizePercent"] / 100.0 * maxTime
-    windowLeft = cfg["windowOffsetPercent"] / 100.0 * (maxTime - windowSize)
-    windowRight = windowLeft + windowSize
-    windowedTimeSeries = timeseries.query(f"time >= {windowLeft} and time <= {windowRight}")
-    rfr = getRFR(cfg, seed)
+    max_time = max(timeseries["time"])
+    window_size = window_size_ratio * max_time  # cfg["window_size_percent"] / 100.0 * maxTime
+    window_left = cfg["window_offset_percent"] / 100.0 * (max_time - window_size)
+    window_right = window_left + window_size
+    windowed_time_series = timeseries.query(f"time >= {window_left} and time <= {window_right}")
+    rfr = get_rfr(cfg, seed)
     # features
-    startTime = time.time()
-    feature_container.computeFeatureState(windowedTimeSeries, cfg)
+    start_time = time.time()
+    feature_container.compute_feature_state(windowed_time_series, cfg)
 
     def rmse(y, y_pred):
         return np.sqrt(np.mean((y_pred - y) ** 2))
 
     # Creating root mean square error for sklearns crossvalidation
     rmse_scorer = make_scorer(rmse, greater_is_better=False)
-    feature_matrix = pd.concat([feature_container.FeatureState, testSettings], axis=1)
+    feature_matrix = pd.concat([feature_container.feature_state, test_settings], axis=1)
     print("Len Featmat" + str(len(feature_matrix)))
     score = cross_val_score(rfr, feature_matrix, y, cv=10, scoring=rmse_scorer)
-    duration = time.time() - startTime
+    duration = time.time() - start_time
     print("")
-    print(f"Eval FeatureState: ({duration})s " + str(feature_container.FeatureState.columns))
+    print(f"Eval FeatureState: ({duration})s " + str(feature_container.feature_state.columns))
     print("")
     print("**")
-    print(f"size of windowedTimeSeries {len(windowedTimeSeries)}")
+    print(f"size of windowedTimeSeries {len(windowed_time_series)}")
     print(
-        f"Size {cfg['windowSizePercent']} Duration {round(duration)}s, window_left:{windowLeft}, window_right:{windowRight}/{maxTime}")
+        f"Size {cfg['window_size_percent']} Duration {round(duration)}s, window_left:{window_left}, "
+        f"window_right:{window_right}/{max_time}")
     print("**")
     cost = -1 * np.mean(score)  # + 0.01 * duration
     return cost  # Because cross_validation sign-flips the score
 
 
-def getPrediction(cfg: dict, seed: int, feature_container: FeatureContainer, x_train: pd.DataFrame, testSettings_train: pd.DataFrame, y_train: pd.DataFrame, x_test: pd.DataFrame, testSettings_test: pd.DataFrame):
-    rfr = getRFR(cfg, seed)
-    feature_container.resetFeatureState()
-    feature_container.computeFeatureState(x_train, cfg, computeForAllFeatures=True)
-    feature_matrix_train = pd.concat([feature_container.FeatureState, testSettings_train], axis=1)
+def get_prediction(cfg: dict, seed: int, feature_container: FeatureContainer, x_train: pd.DataFrame,
+                   test_settings_train: pd.DataFrame, y_train: pd.DataFrame, x_test: pd.DataFrame,
+                   test_settings_test: pd.DataFrame):
+    rfr = get_rfr(cfg, seed)
+    feature_container.reset_feature_state()
+    feature_container.compute_feature_state(x_train, cfg, compute_for_all_features=True)
+    feature_matrix_train = pd.concat([feature_container.feature_state, test_settings_train], axis=1)
     rfr.fit(feature_matrix_train, y_train)
-    feature_container.resetFeatureState()
-    feature_container.computeFeatureState(x_test, cfg, computeForAllFeatures=True)
-    feature_matrix_test = pd.concat([feature_container.FeatureState, testSettings_test], axis=1)
+    feature_container.reset_feature_state()
+    feature_container.compute_feature_state(x_test, cfg, compute_for_all_features=True)
+    feature_matrix_test = pd.concat([feature_container.feature_state, test_settings_test], axis=1)
     y_pred = rfr.predict(feature_matrix_test)
     importances = rfr.steps[1][1].feature_importances_
     return y_pred, importances
 
 
-def getRFR(cfg: dict, seed: int):
+def get_rfr(cfg: dict, seed: int):
     return make_pipeline(
         StandardScaler(),
         RandomForestRegressor(

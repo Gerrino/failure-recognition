@@ -19,14 +19,14 @@ from ConfigSpace.hyperparameters import (
 from smac.configspace import ConfigurationSpace
 from smac.facade.smac_hpo_facade import SMAC4HPO
 from smac.scenario.scenario import Scenario
-import RandomForestFromCFG
+import random_forest_from_cfg
 from smac.initial_design.latin_hypercube_design import LHDesign
-from FeatureContainer import FeatureContainer
+from feature_container import FeatureContainer
 import pandas as pd
 import datetime
 
 
-def registerDecisionTreeHyperparams(cs, incumbent: dict = None):
+def register_decision_tree_hyperparams(cs, incumbent: dict = None):
     print("\nregister\n numTrees" + str(incumbent["num_trees"] if "num_trees" in incumbent else 10))
     num_trees = UniformIntegerHyperparameter(
         "num_trees",
@@ -82,23 +82,23 @@ def registerDecisionTreeHyperparams(cs, incumbent: dict = None):
     print(str(cs))
 
 
-def CreateSmac(
+def create_smac(
     cs,
     timeseries: pd.DataFrame,
-    testSettings: pd.DataFrame,
+    test_settings: pd.DataFrame,
     y,
-    featureContainer,
-    scenarioDict,
+    feature_container,
+    scenario_dict,
     seed,
     window_size_ratio,
 ) -> SMAC4HPO:
     rf_from_cfg = lambda cfg, seed: (
         RandomForestFromCFG.rf_from_cfg_extended(
-            cfg, seed, timeseries, testSettings, y, featureContainer, window_size_ratio
+            cfg, seed, timeseries, test_settings, y, feature_container, window_size_ratio
         )
     )
-    scenarioDict["cs"] = cs
-    scenario = Scenario(scenarioDict)
+    scenario_dict["cs"] = cs
+    scenario = Scenario(scenario_dict)
     # To optimize, we pass the function to the SMAC-object
     smac = SMAC4HPO(
         scenario=scenario,
@@ -109,23 +109,23 @@ def CreateSmac(
     return smac
 
 
-def LoadFeatureContainer(path_feat_list: Union[Path, str]):
+def load_feature_container(path_feat_list: Union[Path, str]):
     """Create the feature container using a tsfresh feature list"""
-    featureContainer = FeatureContainer()
-    featureContainer.load(path_feat_list)
+    feature_container = FeatureContainer()
+    feature_container.load(path_feat_list)
     print()
-    print(f"There are {sum(1 for f in featureContainer.FeatureList if f.Enabled)} enabled Features!")
+    print(f"There are {sum(1 for f in feature_container.feature_list if f.enabled)} enabled Features!")
     print("Features with parameters:")
-    print(f"   {', '.join(f.Name for f in featureContainer.FeatureList if f.Enabled and len(f.InputParameters) > 0)}")
+    print(f"   {', '.join(f.name for f in feature_container.feature_list if f.enabled and len(f.input_parameters) > 0)}")
     print("Features without parameters:")
     print(
-        f"   clear{', '.join(f.Name for f in featureContainer.FeatureList if f.Enabled and len(f.InputParameters) == 0)}"
+        f"   clear{', '.join(f.name for f in feature_container.feature_list if f.enabled and len(f.input_parameters) == 0)}"
     )
     print()
-    return featureContainer
+    return feature_container
 
 
-def registerLogger():
+def register_logger():
     logger = logging.getLogger("RF-example")
     logging.basicConfig(level=logging.INFO)
     # logging.basicConfig(level=logging.DEBUG)  # Enable to show debug-output
@@ -135,50 +135,50 @@ def registerLogger():
     return logger
 
 
-def createConfigurationSpace(featureContainer, sensors):
+def create_configuration_space(feature_container, sensors):
     cs = ConfigurationSpace()
-    registerDecisionTreeHyperparams(cs, featureContainer.Incumbent)
-    windowSizePercent = UniformIntegerHyperparameter("windowSizePercent", 10, 100, default_value=50)
-    windowOffsetPercent = UniformIntegerHyperparameter("windowOffsetPercent", 0, 90, default_value=0)
-    cs.add_hyperparameters([windowSizePercent, windowOffsetPercent])
-    featureContainer.registerHyperparameters(cs, sensors)
+    register_decision_tree_hyperparams(cs, feature_container.incumbent)
+    window_size_percent = UniformIntegerHyperparameter("window_size_percent", 10, 100, default_value=50)
+    window_offset_percent = UniformIntegerHyperparameter("window_offset_percent", 0, 90, default_value=0)
+    cs.add_hyperparameters([window_size_percent, window_offset_percent])
+    feature_container.register_hyperparameters(cs, sensors)
     return cs
 
 
-def Smac_tsfresh_optimize(
+def smac_tsfresh_optimize(
     timeseries: pd.DataFrame,
-    testSettings: pd.DataFrame,
+    test_settings: pd.DataFrame,
     y,
-    featureContainer: FeatureContainer,
-    scenarioDict,
+    feature_container: FeatureContainer,
+    scenario_dict,
     seed,
     window_size_ratio,
 ):
     sensors = timeseries.columns[2:]
-    featureList = featureContainer.FeatureList
-    dateTimeOptStart = datetime.datetime.now()
-    numOptFeat = sum(1 for f in featureList if f.Enabled and len(f.InputParameters) > 0)
-    nameOptFeat = ", ".join(f.Name for f in featureContainer.FeatureList if f.Enabled)
+    feature_list = feature_container.feature_list
+    date_time_opt_start = datetime.datetime.now()
+    num_opt_feat = sum(1 for f in feature_list if f.enabled and len(f.input_parameters) > 0)
+    name_opt_feat = ", ".join(f.name for f in feature_container.feature_list if f.enabled)
     for sensor in sensors:
         for f in filter(
-            lambda f: f.Enabled and len(f.InputParameters) > 0,
-            featureContainer.FeatureList,
+            lambda f: f.enabled and len(f.input_parameters) > 0,
+            feature_container.feature_list,
         ):  # drop existing default values of enabled features
             print("will it drop")
             drop_name = None
-            for col_name in featureContainer.FeatureState.columns:
-                drop_name = col_name if col_name.startswith(f"{sensor}__{f.Name}__") else drop_name
-            if drop_name != None:
+            for col_name in feature_container.feature_state.columns:
+                drop_name = col_name if col_name.startswith(f"{sensor}__{f.name}__") else drop_name
+            if drop_name is not None:
                 print("try dropping" + drop_name)
-                featureContainer.FeatureState = featureContainer.FeatureState.drop(drop_name, axis=1)
-    cs = createConfigurationSpace(featureContainer, sensors)
-    smac = CreateSmac(
+                feature_container.feature_state = feature_container.feature_state.drop(drop_name, axis=1)
+    cs = create_configuration_space(feature_container, sensors)
+    smac = create_smac(
         cs,
         timeseries,
-        testSettings,
+        test_settings,
         y,
-        featureContainer,
-        scenarioDict,
+        feature_container,
+        scenario_dict,
         seed,
         window_size_ratio,
     )
@@ -189,51 +189,51 @@ def Smac_tsfresh_optimize(
     finally:
         incumbent = smac.solver.incumbent
     inc_value = smac.get_tae_runner().run(incumbent, 1)[1]
-    featureContainer.Incumbent = incumbent
+    feature_container.incumbent = incumbent
     print("Optimized Value: %.2f" % inc_value)
-    newHistoryRow = pd.DataFrame(
+    new_history_row = pd.DataFrame(
         {
             "datetime": [datetime.datetime.now()],
-            "timespan": [datetime.datetime.now() - dateTimeOptStart],
-            "action": [f"Optimize {nameOptFeat}"],
+            "timespan": [datetime.datetime.now() - date_time_opt_start],
+            "action": [f"Optimize {name_opt_feat}"],
             "orig-value": [def_value],
             "opt-value": [inc_value],
         }
     )
-    featureContainer.History = featureContainer.History.append(newHistoryRow)
-    featureContainer.computeFeatureState(timeseries, incumbent)  # get parameterless feature matrix
+    feature_container.history = feature_container.history.append(new_history_row)
+    feature_container.compute_feature_state(timeseries, incumbent)  # get parameterless feature matrix
     return incumbent
 
 
 def smac_tsfresh_window_opt(
     timeseries: pd.DataFrame,
-    testSettings: pd.DataFrame,
+    test_settings: pd.DataFrame,
     y,
-    pathDict,
-    scenarioDict,
+    path_dict,
+    scenario_dict,
     window_size,
     overlap,
     seed,
     window_size_ratio,
 ):
     print(f"Starting Optimization window_size: {window_size}, overlap: {overlap}")
-    featureContainer = LoadFeatureContainer(pathDict["features"])
+    feature_container = load_feature_container(path_dict["features"])
     print("Compute feature state for parameterless features")
-    featureContainer.computeFeatureState(timeseries, cfg=None)  # get default feature matrix
-    featureList = featureContainer.FeatureList
-    allEnabledFeatures = list(filter(lambda f: f.Enabled, featureContainer.FeatureList))
-    enabledFeatures = list(
+    feature_container.compute_feature_state(timeseries, cfg=None)  # get default feature matrix
+    feature_list = feature_container.feature_list
+    all_enabled_features = list(filter(lambda f: f.enabled, feature_container.feature_list))
+    enabled_features = list(
         filter(
-            lambda f: f.Enabled and len(f.InputParameters) > 0,
-            featureContainer.FeatureList,
+            lambda f: f.enabled and len(f.input_parameters) > 0,
+            feature_container.feature_list,
         )
     )
-    enabled_feature_count = len(enabledFeatures)
+    enabled_feature_count = len(enabled_features)
     incr = window_size - overlap
     if incr <= 0:
         raise Exception("FATAL ERROR: Overlap must be smaller than window_size!")
     window_start_pntr = 0
-    logger = registerLogger()
+    logger = register_logger()
     tot_it = round(
         min(1, np.ceil(enabled_feature_count / window_size))
         + max(0, np.ceil((enabled_feature_count - window_size) / incr))
@@ -241,37 +241,37 @@ def smac_tsfresh_window_opt(
     it = 1
     incumbent = {}
     while window_start_pntr < enabled_feature_count:
-        for f in filter(lambda f: f.Enabled, featureList):
-            f.Enabled = False
+        for f in filter(lambda f: f.enabled, feature_list):
+            f.enabled = False
         cur_window = [
             window_start_pntr,
             min(window_start_pntr + window_size - 1, enabled_feature_count - 1),
         ]
-        for i, item in enumerate(enabledFeatures):
-            if i >= cur_window[0] and i <= cur_window[1] and item in enabledFeatures:
-                item.Enabled = True
+        for i, item in enumerate(enabled_features):
+            if cur_window[0] <= i <= cur_window[1] and item in enabled_features:
+                item.enabled = True
             else:
-                item.Enabled = False
+                item.enabled = False
         print()
         print(f"Iteration {it}/{tot_it}")
         print(
-            "|".join("█" if f.Enabled else "░" for f in enabledFeatures)
-            + f" -> {', '.join(f.Name for f in featureContainer.FeatureList if f.Enabled)}"
+            "|".join("█" if f.enabled else "░" for f in enabled_features)
+            + f" -> {', '.join(f.name for f in feature_container.feature_list if f.enabled)}"
         )
         print()
         window_start_pntr += incr
         it += 1
         incumbent.update(
-            Smac_tsfresh_optimize(
+            smac_tsfresh_optimize(
                 timeseries,
-                testSettings,
+                test_settings,
                 y,
-                featureContainer,
-                scenarioDict,
+                feature_container,
+                scenario_dict,
                 seed,
                 window_size_ratio,
             )
         )
-    for f in allEnabledFeatures:
-        f.Enabled = True
-    return incumbent, featureContainer
+    for f in all_enabled_features:
+        f.enabled = True
+    return incumbent, feature_container

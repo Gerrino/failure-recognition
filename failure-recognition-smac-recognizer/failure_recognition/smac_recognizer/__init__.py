@@ -14,7 +14,7 @@ PATH_DICT = {
     "testSettings": "/home/gerritnoske/Documents/Projekt_Henne/testsettings.csv",
 }
 
-SCENARIODICT = {
+SCENARIO_DICT = {
     "run_obj": "quality",  # we optimize quality (alternative runtime)
     "runcount-limit": 20,  # max. number of function evaluations; for this example set to a low number
     "deterministic": "true",
