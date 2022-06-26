@@ -34,7 +34,7 @@ source .venv/bin/activate
 
 I) Create + activate a virtual environment within a subpackage (containing a setup.py) (see https://packaging.python.org/en/latest/guides/packaging-namespace-packages/)
 
-II) To install that subpackage run:
+II) To install that subpackage for development run:
 ```bash
 pip install -e .
 ```
@@ -42,4 +42,8 @@ III)  To install other subpackages within the failure-recognition namespace pack
 ```bash
 cd ../failure-recognition-die-casting
 pip install .
+```
+IV) For installing development requirements
+```bash
+pip install -e .[dev]
 ```

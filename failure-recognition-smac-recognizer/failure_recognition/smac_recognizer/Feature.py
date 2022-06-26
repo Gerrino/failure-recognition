@@ -1,19 +1,22 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Aug  9 10:11:25 2021
+"""Module providing the feature class"""
 
-@author: gerritnoske
-"""
-
+from typing import List
 from MyProperty import MyProperty
-            
-#Properties: Name, InputParameters
-#InputParameters is a list with element type: MyProperty
+
+
 class Feature:
-    """Feature class"""
+    """Feature class
+
+    Examples
+    --------
+
+    Properties: Name, InputParameters
+    InputParameters is a list with element type: MyProperty
+    """
+
     Enabled: bool
     Name: str
+    InputParameters: List[MyProperty]
 
     def __init__(self, jsonObj):
         self.__dict__ = jsonObj
@@ -32,12 +35,5 @@ class Feature:
     def GetParameterDict(self, cfg, sensor) -> dict:
         parameterDict = {}
         for inputParam in self.InputParameters:
-            parameterDict.update(inputParam.GetKeyValuePair(cfg, sensor))     
+            parameterDict.update(inputParam.GetKeyValuePair(cfg, sensor))
         return parameterDict
-
-
-
-
-       
-            
-        

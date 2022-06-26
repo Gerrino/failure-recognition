@@ -7,6 +7,6 @@ setup(
     packages=find_namespace_packages(include=['failure_recognition.*']),
     install_requires=required,
     extras_require = {
-       'dev': ['pylint'],     
+       'dev': ['pylint', 'black', 'sphinx'],     
    }
 )
