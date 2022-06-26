@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 from typing import List, Union
-from feature import Feature
+from failure_recognition.signal_processing.feature import Feature
 from tsfresh.utilities.dataframe_functions import impute
 from tsfresh import extract_features
 import pandas as pd
