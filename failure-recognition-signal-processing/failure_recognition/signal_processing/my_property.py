@@ -1,7 +1,7 @@
 """Moudle providing the MyProperty class"""
 
 from typing import List
-from failure_recognition.smac_recognizer import (
+from failure_recognition.signal_processing import (
     DEFAULT_FLOAT,
     DEFAULT_INT,
     DEFAULT_MAX_FLOAT,
