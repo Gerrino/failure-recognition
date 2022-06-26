@@ -19,9 +19,9 @@ from ConfigSpace.hyperparameters import (
 from smac.configspace import ConfigurationSpace
 from smac.facade.smac_hpo_facade import SMAC4HPO
 from smac.scenario.scenario import Scenario
-from random_forest_from_cfg import rf_from_cfg_extended
 from smac.initial_design.latin_hypercube_design import LHDesign
-from feature_container import FeatureContainer
+from random_forest_from_cfg import rf_from_cfg_extended
+from failure_recognition.signal_processing.feature_container import FeatureContainer
 import pandas as pd
 import datetime
 

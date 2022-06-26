@@ -2,11 +2,13 @@
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import smac_tsfresh
-from failure_recognition.smac_recognizer import PATH_DICT, SCENARIO_DICT
-from smac.scenario.scenario import Scenario
 import numpy as np
-import random_forest_from_cfg
+from smac.scenario.scenario import Scenario
+from failure_recognition.smac_recognizer import PATH_DICT, SCENARIO_DICT
+
+import smac_tsfresh
+
+import failure_recognition.signal_processing.random_forest_from_cfg
 
 plt.close("all")
 timeseries = pd.read_csv(PATH_DICT["timeSeries"], decimal=".", sep=",", header=0)
@@ -26,6 +28,7 @@ test_settings.index += 1
     seed=np.random.RandomState(42),
     window_size_ratio=0.2,
 )
+
 featureState = feature_container.feature_state
 history = feature_container.history.reset_index()
 y_pred, importances = random_forest_from_cfg.get_prediction(

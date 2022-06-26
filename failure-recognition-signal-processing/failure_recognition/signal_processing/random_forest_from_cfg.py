@@ -16,7 +16,7 @@ import numpy as np
 import time
 import pandas as pd
 
-from failure_recognition.smac_recognizer.feature_container import FeatureContainer
+from failure_recognition.signal_processing.feature_container import FeatureContainer
 
 
 def rf_from_cfg_extended(cfg, seed, timeseries: pd.DataFrame, test_settings: pd.DataFrame, y: pd.DataFrame,
@@ -40,7 +40,7 @@ def rf_from_cfg_extended(cfg, seed, timeseries: pd.DataFrame, test_settings: pd.
             per cv-fold
     """
     max_time = max(timeseries["time"])
-    window_size = window_size_ratio * max_time  # cfg["window_size_percent"] / 100.0 * maxTime
+    window_size = window_size_ratio * max_time
     window_left = cfg["window_offset_percent"] / 100.0 * (max_time - window_size)
     window_right = window_left + window_size
     windowed_time_series = timeseries.query(f"time >= {window_left} and time <= {window_right}")
