@@ -30,7 +30,7 @@ class MyProperty:
     enabled: bool = True
 
     @classmethod
-    def from_json(cls, json_obj: dict, id_prefix: str) -> MyProperty:
+    def from_json(cls, json_obj: dict, id_prefix: str = "") -> MyProperty:
         json_obj["id_prefix"] = id_prefix
         my_property = cls(**json_obj)
         my_property.type = MyType(json_obj["type"], my_property.id)
