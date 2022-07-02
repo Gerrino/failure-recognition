@@ -16,7 +16,8 @@ git pull
 
 ```bash
 cd failure-recognition-signal-processing
-py -3 -m venv .venv # create a virtual environment
+%APPDATA%/Local/Programs/Python/Python39/python.exe -m venv .venv # create a virtual environment or
+py -3 -m venv .venv
 .venv/scripts/activate # activate the virtual environment
 pip install setuptools
 ```

@@ -1,9 +1,11 @@
 """Module providing the feature class"""
-
+from __future__ import annotations
+from dataclasses import dataclass
 from typing import List
 from failure_recognition.signal_processing.my_property import MyProperty
 
 
+@dataclass
 class Feature:
     """Feature class
 
@@ -18,13 +20,15 @@ class Feature:
     name: str
     input_parameters: List[MyProperty]
 
-    def __init__(self, json_obj):
-        self.__dict__ = json_obj
+    @classmethod
+    def from_json(cls, json_obj: dict) -> Feature:
+        feature = cls(**json_obj)
         tmp_input_params = []
-        for obj in self.input_parameters:
-            input_param = MyProperty(obj, self.name)
+        for obj in feature.input_parameters:
+            input_param = MyProperty.from_json(obj, feature.name)
             tmp_input_params.append(input_param)
-        self.input_parameters = tmp_input_params
+        feature.input_parameters = tmp_input_params
+        return feature
 
     def __str__(self):
         return f"Feature '{self.name}'"

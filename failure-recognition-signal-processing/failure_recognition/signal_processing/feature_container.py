@@ -1,5 +1,6 @@
 """Module providing the feature container class"""
-
+from __future__ import annotations
+from dataclasses import dataclass, field
 import json
 from pathlib import Path
 from typing import List, Union
@@ -9,10 +10,12 @@ from tsfresh import extract_features
 import pandas as pd
 import datetime
 
+from failure_recognition.signal_processing.my_property import MyProperty
+
 
 #
 
-
+@dataclass
 class FeatureContainer:
     """Container class for tsfresh features
 
@@ -20,11 +23,13 @@ class FeatureContainer:
     --------
     Feature class, e.g. agg_ autocorrelation
     """
+    feature_list: List[Feature] = field(default_factory=list)
+    incumbent: dict = field(default_factory=dict)
+    feature_state: pd.DataFrame = field(default_factory=pd.DataFrame)
+    history: pd.DataFrame = field(default_factory=pd.DataFrame)
+    random_forest_params: List[MyProperty] = field(default_factory=list)
 
-    def __init__(self):
-        self.incumbent = {}
-        self.feature_state: pd.DataFrame = pd.DataFrame()
-        self.feature_list: List[Feature] = []
+    def __post_init__(self):
         self.history = pd.DataFrame(
             {
                 "datetime": [datetime.datetime.now()],
@@ -32,8 +37,7 @@ class FeatureContainer:
                 "action": ["startup"],
                 "orig-value": [0],
                 "opt-value": [0],
-            }
-        )
+            })
 
     def __str__(self):
         return f"Feature Container with {len(self.feature_list)} elements"
@@ -57,25 +61,21 @@ class FeatureContainer:
         for col2_name in filter(lambda c2: (c2 in self.feature_state.columns), new_sensor_state.columns):
             del self.feature_state[col2_name]
         for col2_name in filter(lambda c2: not c2 in self.feature_state.columns, new_sensor_state.columns):
-            self.feature_state = pd.concat([self.feature_state, new_sensor_state[col2_name]], axis=1)
+            self.feature_state = pd.concat(
+                [self.feature_state, new_sensor_state[col2_name]], axis=1)
         print(f"update with {old_cols} => {len(self.feature_state.columns)}")
 
-    def load(self, path: Union[Path, str]):
-        tsfreshlist = open(path)
-        object_list = json.loads(
-            tsfreshlist.read(),
-        )
-        for obj in object_list:
-            feat = Feature(obj)
+    def load(self, tsfresh_features: Union[Path, str], random_forest_parameters: Union[Path, str]):
+        with open(tsfresh_features, 'r', encoding="utf-8") as features_file:
+            feature_list = json.load(features_file)
+        for feature in feature_list:
+            feat = Feature.from_json(feature)
             self.feature_list.append(feat)
-
-    def register_hyperparameters(self, cs, sensors):
-        for sensor in sensors:
-            for f in filter(lambda f: f.enabled, self.feature_list):
-                for i in f.input_parameters:
-                    hyp = i.get_hyper_parameter_list(sensor)
-                    print(f"Added Hyper Parameter: {hyp}")
-                    cs.add_hyperparameters(hyp)
+        self.random_forest_params.clear()
+        with open(random_forest_parameters, 'r', encoding="utf-8") as features_file:
+            forest_parameters_json = json.load(features_file)
+        for forest_parameter_json in forest_parameters_json:
+            self.random_forest_params.append(MyProperty.from_json(forest_parameter_json))
 
     def reset_feature_state(self):
         self.feature_state = {}
@@ -88,8 +88,10 @@ class FeatureContainer:
         """
         sensors = timeseries.columns[2:]
         if compute_for_all_features and cfg is not None:
-            self.compute_feature_state(timeseries, cfg=None, compute_for_all_features=True)
-        kind_to_fc_parameters = self.get_feature_dictionary(sensors, cfg, not compute_for_all_features)
+            self.compute_feature_state(
+                timeseries, cfg=None, compute_for_all_features=True)
+        kind_to_fc_parameters = self.get_feature_dictionary(
+            sensors, cfg, not compute_for_all_features)
         if len(kind_to_fc_parameters[sensors[0]]) > 0:
             x = extract_features(
                 timeseries, column_id="id", column_sort="time", kind_to_fc_parameters=kind_to_fc_parameters
@@ -109,11 +111,18 @@ class FeatureContainer:
             feature_dict[sensor] = {}
             if cfg is not None:
                 for feat in filter(lambda f: f.enabled and len(f.input_parameters) > 0, self.feature_list):
-                    feature_dict[sensor][feat.name] = [feat.get_parameter_dict(cfg, sensor)]
+                    feature_dict[sensor][feat.name] = [
+                        feat.get_parameter_dict(cfg, sensor)]
             else:
                 for feat in filter(lambda f: f.enabled and len(f.input_parameters) == 0, self.feature_list):
                     feature_dict[sensor][feat.name] = None
                 if use_default_values:
                     for feat in filter(lambda f: f.enabled and len(f.input_parameters) > 0, self.feature_list):
-                        feature_dict[sensor][feat.name] = [feat.get_parameter_dict(None, sensor)]
+                        feature_dict[sensor][feat.name] = [
+                            feat.get_parameter_dict(None, sensor)]
         return feature_dict
+
+
+if __name__ == "__main__":
+    container = FeatureContainer()
+    pass

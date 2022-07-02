@@ -1,6 +1,8 @@
-"""Moudle providing the MyProperty class"""
+"""Module providing the MyProperty class"""
 
-from typing import List
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Generic, List, TypeVar
 from failure_recognition.signal_processing import (
     DEFAULT_FLOAT,
     DEFAULT_INT,
@@ -11,6 +13,7 @@ from failure_recognition.signal_processing import (
 )
 
 
+@dataclass
 class MyProperty:
     """Class providing property information used by tsfresh feature
 
@@ -22,11 +25,20 @@ class MyProperty:
     """
 
     name: str
+    type: MyType
+    id_prefix: str = ""
+    enabled: bool = True
 
-    def __init__(self, json_obj, id_prefix):
-        self.__dict__ = json_obj
-        self.id = f"{id_prefix}_{self.name}"  # e.g. agg_autocorrelation_param_f_agg
-        self.type = MyType(json_obj["type"], self.id)
+    @classmethod
+    def from_json(cls, json_obj: dict, id_prefix: str) -> MyProperty:
+        json_obj["id_prefix"] = id_prefix
+        my_property = cls(**json_obj)
+        my_property.type = MyType(json_obj["type"], my_property.id)
+        return my_property
+
+    @property
+    def id(self) -> str:    # e.g. agg_autocorrelation_param_f_agg
+        return f"{self.id_prefix}_{self.name}"
 
     def get_default_value(self):
         """Get the default value of the property depending on the type"""
@@ -89,30 +101,44 @@ class MyProperty:
         if self.type.system_type == "dictionary":
             hyper_parameters_of_dict = []
             for p in self.type.property_list:
-                hyper_parameters_of_dict.append(p.get_hyper_parameter_list(sensor)[0])
+                hyper_parameters_of_dict.append(
+                    p.get_hyper_parameter_list(sensor)[0])
             return hyper_parameters_of_dict
 
     def get_id(self, sensor):
         return sensor + "__" + self.id
 
 
-class MyType:
+T = TypeVar('T')
+
+
+@dataclass
+class MyType(Generic[T]):
     """Class providing type information for a MyProperty
 
     Example
     -------
     MyType class, e.g. string with SystemType="string" and range "Range" of optional values this type can assume
     """
+    system_type: str
+    range: List[T] = None
+    default_value: T = None
+    property_list: List[MyProperty] = None
 
-    property_list: List[MyProperty]
+    @classmethod
+    def from_json(cls, json_obj, id_prefix) -> MyType:
+        my_type = cls(**json_obj)
+        if my_type.system_type == "dictionary":
+            my_type.property_list = []
+            for property_item in json_obj["property_list"]:
+                my_type.property_list.append(
+                    MyProperty.from_json(property_item, id_prefix))
+        return my_type
 
-    def __init__(self, json_obj, id_prefix):
-        self.system_type = json_obj["system_type"]
-        if self.system_type == "dictionary":
-            self.property_list = []
-            for obj in json_obj["property_list"]:
-                self.property_list.append(MyProperty(obj, id_prefix))
-        if "range" in json_obj:
-            self.range = json_obj["range"]
-        if "default_value" in json_obj:
-            self.default_value = json_obj["default_value"]
+
+if __name__ == "__main__":
+    type = MyType.from_json({"range": [5], "system_type": "int",
+                             "default_value": 5}, "yolo_")
+    type.default_value = 5
+
+    pass

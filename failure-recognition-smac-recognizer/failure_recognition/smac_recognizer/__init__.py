@@ -4,6 +4,7 @@
 
 PATH_DICT = {
     "features": "./examples/tsfresh_features.json",
+    "forest_params": "./examples/tsfresh_random_forest.json",
     "timeSeries": "./examples/NASA_tsfresh_format_all.csv",
     "label": "./examples/label.csv",
     "testSettings": "./examples/testsettings.csv",
