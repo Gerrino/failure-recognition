@@ -10,7 +10,7 @@ from argparse import ArgumentError
 import logging
 from pathlib import Path
 from typing import List, Union
-
+import ConfigSpace
 import numpy as np
 from ConfigSpace.hyperparameters import (
     CategoricalHyperparameter,

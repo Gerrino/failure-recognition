@@ -76,9 +76,11 @@ class FeatureContainer:
         with open(random_forest_parameters, 'r', encoding="utf-8") as features_file:
             forest_parameters_json = json.load(features_file)
         for forest_parameter_json in forest_parameters_json:
-            self.random_forest_params.append(MyProperty.from_json(forest_parameter_json))
+            self.random_forest_params.append(
+                MyProperty.from_json(forest_parameter_json))
 
     def reset_feature_state(self):
+        """Reset the feature state"""
         self.feature_state = {}
 
     def compute_feature_state(self, timeseries: pd.DataFrame, cfg: dict = None, compute_for_all_features: bool = False):
