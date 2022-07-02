@@ -19,6 +19,7 @@ class Feature:
     enabled: bool
     name: str
     input_parameters: List[MyProperty]
+    return_type: str
 
     @classmethod
     def from_json(cls, json_obj: dict) -> Feature:
