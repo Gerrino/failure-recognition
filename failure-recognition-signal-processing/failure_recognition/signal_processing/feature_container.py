@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 import json
 from pathlib import Path
 from typing import List, Union
+from failure_recognition.signal_processing import PATH_DICT
 from failure_recognition.signal_processing.feature import Feature
 from tsfresh.utilities.dataframe_functions import impute
 from tsfresh import extract_features
@@ -125,4 +126,5 @@ class FeatureContainer:
 
 if __name__ == "__main__":
     container = FeatureContainer()
+    container.load(PATH_DICT["features"], PATH_DICT["forest_params"])
     pass

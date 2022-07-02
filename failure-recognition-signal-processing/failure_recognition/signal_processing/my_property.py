@@ -33,7 +33,7 @@ class MyProperty:
     def from_json(cls, json_obj: dict, id_prefix: str = "") -> MyProperty:
         json_obj["id_prefix"] = id_prefix
         my_property = cls(**json_obj)
-        my_property.type = MyType(json_obj["type"], my_property.id)
+        my_property.type = MyType.from_json(json_obj["type"], my_property.id)
         return my_property
 
     @property
@@ -124,6 +124,8 @@ class MyType(Generic[T]):
     range: List[T] = None
     default_value: T = None
     property_list: List[MyProperty] = None
+    element_type: str = None
+    array_of_my_type: bool = None
 
     @classmethod
     def from_json(cls, json_obj, id_prefix) -> MyType:

@@ -378,8 +378,8 @@
             {
               "name": "widths",
               "type": {
-                "ElementType": "int",
-                "ArrayOfMyType": null,
+                "element_type": "int",
+                "array_of_my_type": null,
                 "system_type": null
               }
             },
