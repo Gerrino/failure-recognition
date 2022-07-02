@@ -28,14 +28,14 @@ import pandas as pd
 import datetime
 
 
-def hyperparameter_from_type(type: MyType, default_value) -> ConfigSpace.hyperparameters:
+def hyperparameter_from_type(name: str, type: MyType, default_value) -> ConfigSpace.hyperparameters:
     default_value = type.default_value if default_value is None else default_value
     if type.system_type == "int":
-        return UniformIntegerHyperparameter(type, *type.range, default_value=default_value)
+        return UniformIntegerHyperparameter(name, *type.range, default_value=default_value)
     if type.system_type == "float":
-        return UniformFloatHyperparameter(type, *type.range, default_value=default_value)
+        return UniformFloatHyperparameter(name, *type.range, default_value=default_value)
     if type.system_type == "string":
-        return CategoricalHyperparameter(type, type.range, default_value=default_value)
+        return CategoricalHyperparameter(name, type.range, default_value=default_value)
     raise ArgumentError(
         message="hyperparameter_from_type: unknown system type " + type.system_type)
 
@@ -46,7 +46,7 @@ def register_decision_tree_hyperparams(cs, type_parameters: List[MyProperty], in
     """
     print("\nregister\n numTrees" +
           str(incumbent["num_trees"] if "num_trees" in incumbent else 10))
-    hyper_parameters = [hyperparameter_from_type(
+    hyper_parameters = [hyperparameter_from_type(p.name,
         p.type, incumbent.get(p.name)) for p in type_parameters]
 
     cs.add_hyperparameters(hyper_parameters)
