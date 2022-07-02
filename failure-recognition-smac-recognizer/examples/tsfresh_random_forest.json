@@ -1,0 +1,86 @@
+[
+    {
+        "enabled": true,
+        "name": "num_trees",
+        "type": {
+            "range": [
+                10,
+                50
+            ],
+            "default_value": 10,
+            "system_type": "int"
+        }
+    },
+    {
+        "enabled": true,
+        "name": "min_weight_frac_leaf",
+        "type": {
+            "range": [
+                0.0,
+                0.5
+            ],
+            "default_value": 0.0,
+            "system_type": "float"
+        }
+    },
+    {
+        "enabled": true,
+        "name": "criterion",
+        "type": {
+            "range": [
+                "squared_error",
+                "absolute_error"
+            ],
+            "default_value": "squared_error",
+            "system_type": "string"
+        }
+    },
+    {
+        "enabled": true,
+        "name": "min_samples_to_split",
+        "type": {
+            "range": [
+                2,
+                20
+            ],
+            "default_value": 2,
+            "system_type": "int"
+        }
+    },
+    {
+        "enabled": true,
+        "name": "min_samples_in_leaf",
+        "type": {
+            "range": [
+                1,
+                20
+            ],
+            "default_value": 1,
+            "system_type": "int"
+        }
+    },
+    {
+        "enabled": true,
+        "name": "max_leaf_nodes",
+        "type": {
+            "range": [
+                10,
+                1000
+            ],
+            "default_value": 100,
+            "system_type": "int"
+        }
+    },
+    {
+        "enabled": true,
+        "name": "do_bootstrapping",
+        "type": {
+            "range": [
+                "False",
+                "True"
+            ],
+            "default_value": "True",
+            "system_type": "string"
+        }
+    }
+]

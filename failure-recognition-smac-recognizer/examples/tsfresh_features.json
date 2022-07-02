@@ -40,7 +40,7 @@
             {
               "name": "maxlag",
               "type": {
-                "DefaultValue": 5,
+                "default_value": 5,
                 "range": [
                   0,
                   0
@@ -268,7 +268,7 @@
       {
         "name": "ql",       
         "type": {
-          "DefaultValue": 0.23,
+          "default_value": 0.23,
           "range": [
             0.0,
             0.49
@@ -279,7 +279,7 @@
       {
         "name": "qh",
         "type": {
-          "DefaultValue": 0.75,
+          "default_value": 0.75,
           "range": [
             0.5,
             1.0
