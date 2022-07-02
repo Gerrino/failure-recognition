@@ -3,7 +3,7 @@
 
 
 PATH_DICT = {
-    "features": "./examples/tsfreshlist.txt",
+    "features": "./examples/tsfresh_features.json",
     "timeSeries": "./examples/NASA_tsfresh_format_all.csv",
     "label": "./examples/label.csv",
     "testSettings": "./examples/testsettings.csv",
