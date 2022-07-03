@@ -62,12 +62,15 @@ class MyProperty:
         return out_range
 
     def get_key_value_pair(self, cfg: dict, sensor) -> dict:
+        """Get name/value dictionary of this property. if cfg contains a parameter value for
+        this property and sensor return the value from the cfg.
+        """
         properties_of_dict = {}
         if self.type.system_type == "dictionary":
             for p in self.type.property_list:
                 properties_of_dict.update(p.get_key_value_pair(cfg, sensor))
             return properties_of_dict
-        if cfg != None:
+        if cfg != None and self.get_id(sensor) in cfg:
             return {self.name: cfg[self.get_id(sensor)]}
         else:
             return {self.name: self.get_default_value()}

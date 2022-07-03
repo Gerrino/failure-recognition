@@ -88,6 +88,16 @@ class FeatureContainer:
         Computes the feature matrix for sensor and the incumbent configuration.
         Attention: Changes within "rf_from_cfg" are not persistent.
         If cfg is not given, then the feature state is computed  with default values
+
+        Parameters
+        ----------
+        timeseries: pd.DataFrame
+            timeseries
+        cfg: dict
+            difeature param / value dictionary. If None, use default values
+        compute_for_all_features: bool
+            If true, compute the feature state for all features (including parameterless features)
+
         """
         sensors = timeseries.columns[2:]
         if compute_for_all_features and cfg is not None:

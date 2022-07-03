@@ -3,12 +3,14 @@ from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 from failure_recognition.signal_processing import PATH_DICT
+from failure_recognition.signal_processing import feature_container
 from failure_recognition.signal_processing.feature_container import FeatureContainer
+from failure_recognition.signal_processing.random_forest_from_cfg import rf_from_cfg_extended
 
 from failure_recognition.signal_processing.signal_helper import get_fft
 
 def show_fft():
-    A = 2.75
+    A = 2.756
     f = 1.0
     fs = 200.0
     ts = 1 / fs
@@ -34,7 +36,11 @@ def example_prediction():
 
     container = FeatureContainer()
     container.load(PATH_DICT["features"], PATH_DICT["forest_params"])
-    container.compute_feature_state(timeseries, cfg=None)
+    #container.compute_feature_state(timeseries, cfg=None)
+    cfg = {p.name:p.get_default_value() for p in container.random_forest_params}
+    rf_from_cfg_extended(cfg, np.random.seed(42), timeseries, test_settings, y, container)
+
+   
     pass
 
 if __name__ == "__main__":

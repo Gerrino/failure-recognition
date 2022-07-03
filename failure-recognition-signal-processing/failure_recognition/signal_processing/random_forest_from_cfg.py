@@ -26,7 +26,7 @@ def rf_from_cfg_extended(
     test_settings: pd.DataFrame,
     y: pd.DataFrame,
     feature_container: FeatureContainer,
-    window_size_ratio: float,
+    window_size_ratio: float = None,
 ):
     """
     Creates a random forest regressor from sklearn and fits the given data on it.
@@ -47,10 +47,12 @@ def rf_from_cfg_extended(
         per cv-fold
     """
     max_time = max(timeseries["time"])
-    window_size = window_size_ratio * max_time
-    window_left = cfg["window_offset_percent"] / 100.0 * (max_time - window_size)
-    window_right = window_left + window_size
-    windowed_time_series = timeseries.query(f"time >= {window_left} and time <= {window_right}")
+    windowed_time_series, window_left, window_right = timeseries, 0, max_time   
+    if window_size_ratio is not None:
+        window_size = window_size_ratio * max_time
+        window_left = cfg["window_offset_percent"] / 100.0 * (max_time - window_size)
+        window_right = window_left + window_size
+        windowed_time_series = timeseries.query(f"time >= {window_left} and time <= {window_right}")
     rfr = get_rfr(cfg, seed)
     # features
     start_time = time.time()
@@ -61,8 +63,8 @@ def rf_from_cfg_extended(
 
     # Creating root mean square error for sklearns crossvalidation
     rmse_scorer = make_scorer(rmse, greater_is_better=False)
-    feature_matrix = pd.concat([feature_container.feature_state, test_settings], axis=1)
-    print("Len Featmat" + str(len(feature_matrix)))
+    feature_matrix = pd.concat([feature_container.feature_state.reset_index(drop=True), test_settings.reset_index(drop=True)], axis=1)
+    print("Shape feature matrix: " + str(feature_matrix.shape))
     score = cross_val_score(rfr, feature_matrix, y, cv=10, scoring=rmse_scorer)
     duration = time.time() - start_time
     print("")
@@ -70,10 +72,11 @@ def rf_from_cfg_extended(
     print("")
     print("**")
     print(f"size of windowedTimeSeries {len(windowed_time_series)}")
-    print(
-        f"Size {cfg['window_size_percent']} Duration {round(duration)}s, window_left:{window_left}, "
-        f"window_right:{window_right}/{max_time}"
-    )
+    if (win_size:=cfg.get('window_size_percent')) is not None:
+        print(
+            f"Size {win_size} Duration {round(duration)}s, window_left:{window_left}, "
+            f"window_right:{window_right}/{max_time}"
+        )
     print("**")
     cost = -1 * np.mean(score)  # + 0.01 * duration
     return cost  # Because cross_validation sign-flips the score
