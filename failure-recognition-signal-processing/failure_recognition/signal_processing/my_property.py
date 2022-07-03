@@ -3,6 +3,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Generic, List, TypeVar
+from unicodedata import name
 from failure_recognition.signal_processing import (
     DEFAULT_FLOAT,
     DEFAULT_INT,
@@ -69,11 +70,13 @@ class MyProperty:
         if self.type.system_type == "dictionary":
             for p in self.type.property_list:
                 properties_of_dict.update(p.get_key_value_pair(cfg, sensor))
-            return properties_of_dict
+            return {self.name: properties_of_dict}
+        value = None
         if cfg != None and self.get_id(sensor) in cfg:
-            return {self.name: cfg[self.get_id(sensor)]}
+            value = cfg[self.get_id(sensor)]
         else:
-            return {self.name: self.get_default_value()}
+            value = self.get_default_value()
+        return {self.name: value}
 
     def get_hyper_parameter_list(self, sensor) -> list:
         import ConfigSpace.hyperparameters as smac_params

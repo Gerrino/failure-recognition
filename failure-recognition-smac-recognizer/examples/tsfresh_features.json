@@ -1,5 +1,87 @@
 [
   {
+    "enabled": false,
+    "name": "find_peaks_feature",
+    "input_parameters": [
+      {
+        "name": "num_peaks",
+        "type": {
+          "range": [
+            1,
+            20
+          ],
+          "system_type": "int",
+          "default_value": 5
+        }
+      },
+      {
+        "name": "ts",
+        "type": {
+          "range": [
+            0.01,
+            1.00
+          ],
+          "system_type": "float",
+          "default_value": 0.01
+        }
+      },
+      {
+        "name": "mode",
+        "type": {
+          "range": [
+            "distance",
+            "threshold",
+            "prominence"
+          ],
+          "system_type": "string",
+          "default_value": "distance"
+        }
+      },
+      {
+        "name": "x_0",
+        "type": {
+          "property_list": [
+            {
+              "name": "distance",
+              "type": {
+                "system_type": "float",
+                "range": [
+                  1.0,
+                  100
+                ],
+                "default_value": 1.5
+              }
+            },
+            {
+              "name": "threshold",
+              "type": {
+                "system_type": "float",
+                "range": [
+                  0.0,
+                  100
+                ],
+                "default_value": 1
+              }
+            },
+            {
+              "name": "prominence",
+              "type": {
+                "system_type": "float",
+                "range": [
+                  0.0,
+                  100
+                ],
+                "default_value": 0.01
+              }
+            }
+          ],
+          "system_type": "dictionary"
+        }
+      }
+    ],
+    "return_type": "pandas.Series"
+  },
+  {
     "enabled": true,
     "name": "abs_energy",
     "input_parameters": [],
@@ -22,34 +104,26 @@
     "name": "agg_autocorrelation",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "f_agg",
         "type": {
-          "property_list": [
-            {
-              "name": "f_agg",
-              "type": {
-                "range": [
-                  "mean",
-                  "var",
-                  "std",
-                  "median"
-                ],
-                "system_type": "string"
-              }
-            },
-            {
-              "name": "maxlag",
-              "type": {
-                "default_value": 5,
-                "range": [
-                  0,
-                  0
-                ],
-                "system_type": "int"
-              }
-            }
+          "range": [
+            "mean",
+            "var",
+            "std",
+            "median"
           ],
-          "system_type": "dictionary"
+          "system_type": "string"
+        }
+      },
+      {
+        "name": "maxlag",
+        "type": {
+          "default_value": 5,
+          "range": [
+            0,
+            0
+          ],
+          "system_type": "int"
         }
       }
     ],
@@ -60,46 +134,38 @@
     "name": "agg_linear_trend",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "attr",
         "type": {
-          "property_list": [
-            {
-              "name": "attr",
-              "type": {
-                "range": [
-                  "pvalue",
-                  "rvalue",
-                  "intercept",
-                  "slope",
-                  "stderr"
-                ],
-                "system_type": "string"
-              }
-            },
-            {
-              "name": "chunk_len",
-              "type": {
-                "range": [
-                  0,
-                  0
-                ],
-                "system_type": "int"
-              }
-            },
-            {
-              "name": "f_agg",
-              "type": {
-                "range": [
-                  "max",
-                  "min",
-                  "mean",
-                  "median"
-                ],
-                "system_type": "string"
-              }
-            }
+          "range": [
+            "pvalue",
+            "rvalue",
+            "intercept",
+            "slope",
+            "stderr"
           ],
-          "system_type": "dictionary"
+          "system_type": "string"
+        }
+      },
+      {
+        "name": "chunk_len",
+        "type": {
+          "range": [
+            0,
+            0
+          ],
+          "system_type": "int"
+        }
+      },
+      {
+        "name": "f_agg",
+        "type": {
+          "range": [
+            "max",
+            "min",
+            "mean",
+            "median"
+          ],
+          "system_type": "string"
         }
       }
     ],
@@ -137,31 +203,23 @@
     "name": "ar_coefficient",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "coeff",
         "type": {
-          "property_list": [
-            {
-              "name": "coeff",
-              "type": {
-                "range": [
-                  0,
-                  0
-                ],
-                "system_type": "int"
-              }
-            },
-            {
-              "name": "k",
-              "type": {
-                "range": [
-                  0,
-                  0
-                ],
-                "system_type": "int"
-              }
-            }
+          "range": [
+            0,
+            0
           ],
-          "system_type": "dictionary"
+          "system_type": "int"
+        }
+      },
+      {
+        "name": "k",
+        "type": {
+          "range": [
+            0,
+            0
+          ],
+          "system_type": "int"
         }
       }
     ],
@@ -172,33 +230,25 @@
     "name": "augmented_dickey_fuller",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "attr",
         "type": {
-          "property_list": [
-            {
-              "name": "attr",
-              "type": {
-                "range": [
-                  "teststat",
-                  "pvalue",
-                  "usedlag"
-                ],
-                "system_type": "string"
-              }
-            },
-            {
-              "name": "autolag",
-              "type": {
-                "range": [
-                  "AIC",
-                  "BIC",
-                  "t-stats"
-                ],
-                "system_type": "string"
-              }
-            }
+          "range": [
+            "teststat",
+            "pvalue",
+            "usedlag"
           ],
-          "system_type": "dictionary"
+          "system_type": "string"
+        }
+      },
+      {
+        "name": "autolag",
+        "type": {
+          "range": [
+            "AIC",
+            "BIC",
+            "t-stats"
+          ],
+          "system_type": "string"
         }
       }
     ],
@@ -266,7 +316,7 @@
     "name": "change_quantiles",
     "input_parameters": [
       {
-        "name": "ql",       
+        "name": "ql",
         "type": {
           "default_value": 0.23,
           "range": [
@@ -372,39 +422,31 @@
     "name": "cwt_coefficients",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "widths",
         "type": {
-          "property_list": [
-            {
-              "name": "widths",
-              "type": {
-                "element_type": "int",
-                "array_of_my_type": null,
-                "system_type": null
-              }
-            },
-            {
-              "name": "coeff",
-              "type": {
-                "range": [
-                  0,
-                  0
-                ],
-                "system_type": "int"
-              }
-            },
-            {
-              "name": "w",
-              "type": {
-                "range": [
-                  0,
-                  0
-                ],
-                "system_type": "int"
-              }
-            }
+          "element_type": "int",
+          "array_of_my_type": null,
+          "system_type": null
+        }
+      },
+      {
+        "name": "coeff",
+        "type": {
+          "range": [
+            0,
+            0
           ],
-          "system_type": "dictionary"
+          "system_type": "int"
+        }
+      },
+      {
+        "name": "w",
+        "type": {
+          "range": [
+            0,
+            0
+          ],
+          "system_type": "int"
         }
       }
     ],
@@ -421,23 +463,15 @@
     "name": "fft_aggregated",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "aggtype",
         "type": {
-          "property_list": [
-            {
-              "name": "aggtype",
-              "type": {
-                "range": [
-                  "centroid",
-                  "variance",
-                  "skew",
-                  "kurtosis"
-                ],
-                "system_type": "string"
-              }
-            }
+          "range": [
+            "centroid",
+            "variance",
+            "skew",
+            "kurtosis"
           ],
-          "system_type": "dictionary"
+          "system_type": "string"
         }
       }
     ],
@@ -448,36 +482,28 @@
     "name": "fft_coefficient",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "coeff",
         "type": {
-          "property_list": [
-            {
-              "name": "coeff",
-              "type": {
-                "range": [
-                  0,
-                  2147483647
-                ],
-                "system_type": "int"
-              }
-            },
-            {
-              "name": "attr",
-              "type": {
-                "range": [
-                  "real",
-                  "imag",
-                  "abs",
-                  "angle",
-                  "real",
-                  "imag), the absolute value (attr=",
-                  "abs) and the angle in degrees (attr=="
-                ],
-                "system_type": "string"
-              }
-            }
+          "range": [
+            0,
+            2147483647
           ],
-          "system_type": "dictionary"
+          "system_type": "int"
+        }
+      },
+      {
+        "name": "attr",
+        "type": {
+          "range": [
+            "real",
+            "imag",
+            "abs",
+            "angle",
+            "real",
+            "imag), the absolute value (attr=",
+            "abs) and the angle in degrees (attr=="
+          ],
+          "system_type": "string"
         }
       }
     ],
@@ -506,41 +532,33 @@
     "name": "friedrich_coefficients",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "m",
         "type": {
-          "property_list": [
-            {
-              "name": "m",
-              "type": {
-                "range": [
-                  0,
-                  2147483647
-                ],
-                "system_type": "int"
-              }
-            },
-            {
-              "name": "r",
-              "type": {
-                "range": [
-                  0.0,
-                  3.40282347E+38
-                ],
-                "system_type": "float"
-              }
-            },
-            {
-              "name": "coeff",
-              "type": {
-                "range": [
-                  0.0,
-                  3.40282347E+38
-                ],
-                "system_type": "float"
-              }
-            }
+          "range": [
+            0,
+            2147483647
           ],
-          "system_type": "dictionary"
+          "system_type": "int"
+        }
+      },
+      {
+        "name": "r",
+        "type": {
+          "range": [
+            0.0,
+            3.40282347E+38
+          ],
+          "system_type": "float"
+        }
+      },
+      {
+        "name": "coeff",
+        "type": {
+          "range": [
+            0.0,
+            3.40282347E+38
+          ],
+          "system_type": "float"
         }
       }
     ],
@@ -569,21 +587,13 @@
     "name": "index_mass_quantile",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "q",
         "type": {
-          "property_list": [
-            {
-              "name": "q",
-              "type": {
-                "range": [
-                  0.0,
-                  0.0
-                ],
-                "system_type": "float"
-              }
-            }
+          "range": [
+            0.0,
+            0.0
           ],
-          "system_type": "dictionary"
+          "system_type": "float"
         }
       }
     ],
@@ -641,18 +651,10 @@
     "name": "linear_trend",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "attr",
         "type": {
-          "property_list": [
-            {
-              "name": "attr",
-              "type": {
-                "range": [],
-                "system_type": "string"
-              }
-            }
-          ],
-          "system_type": "dictionary"
+          "range": [],
+          "system_type": "string"
         }
       }
     ],
@@ -663,18 +665,10 @@
     "name": "linear_trend_timewise",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "attr",
         "type": {
-          "property_list": [
-            {
-              "name": "attr",
-              "type": {
-                "range": [],
-                "system_type": "string"
-              }
-            }
-          ],
-          "system_type": "dictionary"
+          "range": [],
+          "system_type": "string"
         }
       }
     ],
@@ -834,21 +828,13 @@
     "name": "partial_autocorrelation",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "lag",
         "type": {
-          "property_list": [
-            {
-              "name": "lag",
-              "type": {
-                "range": [
-                  0,
-                  0
-                ],
-                "system_type": "int"
-              }
-            }
+          "range": [
+            0,
+            0
           ],
-          "system_type": "dictionary"
+          "system_type": "int"
         }
       }
     ],
@@ -968,21 +954,13 @@
     "name": "spkt_welch_density",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "coeff",
         "type": {
-          "property_list": [
-            {
-              "name": "coeff",
-              "type": {
-                "range": [
-                  0,
-                  0
-                ],
-                "system_type": "int"
-              }
-            }
+          "range": [
+            0,
+            0
           ],
-          "system_type": "dictionary"
+          "system_type": "int"
         }
       }
     ],
@@ -1017,21 +995,13 @@
     "name": "symmetry_looking",
     "input_parameters": [
       {
-        "name": "param",
+        "name": "r",
         "type": {
-          "property_list": [
-            {
-              "name": "r",
-              "type": {
-                "range": [
-                  0.0,
-                  1.0
-                ],
-                "system_type": "float"
-              }
-            }
+          "range": [
+            0.0,
+            1.0
           ],
-          "system_type": "dictionary"
+          "system_type": "float"
         }
       }
     ],

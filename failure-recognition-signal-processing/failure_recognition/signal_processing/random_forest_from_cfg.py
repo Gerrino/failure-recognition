@@ -67,7 +67,7 @@ def rf_from_cfg_extended(
     print("Shape feature matrix: " + str(feature_matrix.shape))
     score = cross_val_score(rfr, feature_matrix, y, cv=10, scoring=rmse_scorer)
     duration = time.time() - start_time
-    print("")
+    print(f"score: {score}")
     print(f"Eval FeatureState: ({duration})s " + str(feature_container.feature_state.columns))
     print("")
     print("**")

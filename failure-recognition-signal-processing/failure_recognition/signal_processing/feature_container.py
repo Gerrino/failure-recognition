@@ -144,9 +144,9 @@ class FeatureContainer:
             sensors, cfg, not compute_for_all_features)    
 
 
-        settings = ComprehensiveFCParameters()
-        for sensor_kind_to_fc_parameters, v in kind_to_fc_parameters.items():
-            v[find_peaks_feature] = [{"p1": "test", "p2": 5}]
+        # settings = ComprehensiveFCParameters()
+        # for sensor_kind_to_fc_parameters, v in kind_to_fc_parameters.items():
+        #     v[find_peaks_feature] = [{"p1": "test", "p2": 5}]
         
 
         if len(kind_to_fc_parameters[sensors[0]]) > 0:
