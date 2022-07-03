@@ -44,8 +44,7 @@ def register_decision_tree_hyperparams(cs, type_parameters: List[MyProperty], in
     """Create and add hyperparameters for every given type to the cs.
      Their default values are either in incumbent or saved in the type object
     """
-    print("\nregister\n numTrees" +
-          str(incumbent["num_trees"] if "num_trees" in incumbent else 10))
+    print(f"register num_tress={incumbent.get('num_trees', 10)}")
     hyper_parameters = [hyperparameter_from_type(p.name,
         p.type, incumbent.get(p.name)) for p in type_parameters]
 
