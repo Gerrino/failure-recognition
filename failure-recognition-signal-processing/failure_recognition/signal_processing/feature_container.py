@@ -4,17 +4,50 @@ from dataclasses import dataclass, field
 import json
 from pathlib import Path
 from typing import List, Union
+
+import numpy as np
 from failure_recognition.signal_processing import PATH_DICT
 from failure_recognition.signal_processing.feature import Feature
 from tsfresh.utilities.dataframe_functions import impute
 from tsfresh import extract_features
 import pandas as pd
 import datetime
-
+from tsfresh.feature_extraction.settings import ComprehensiveFCParameters
 from failure_recognition.signal_processing.my_property import MyProperty
+from tsfresh.utilities.string_manipulation import convert_to_output_format
+from tsfresh.feature_extraction.feature_calculators import set_property
 
-
+from failure_recognition.signal_processing.signal_helper import find_signal_peaks, get_fft
 #
+def __find_peaks_feature(x, param):
+    t = np.linspace(0, 1, len(x))
+    ts = t[1] - t[0]
+    xf, yyf = get_fft(ts, x)
+    peaks_x, peaks_y = find_signal_peaks(xf, yyf, num_peaks=5)
+    return peaks_x
+
+@set_property("fctype", "combiner")
+def find_peaks_feature(x, param):
+    """
+    Short description of your feature (should be a one liner as we parse the first line of the description)
+
+    Long detailed description, add somme equations, add some references, what kind of statistics is the feature
+    capturing? When should you use it? When not?
+
+    :param x: the time series to calculate the feature of
+    :type x: pandas.Series
+    :param c: the time series name
+    :type c: str
+    :param param: contains dictionaries {"p1": x, "p2": y, ...} with p1 float, p2 int ...
+    :type param: list
+    :return: list of tuples (s, f) where s are the parameters, serialized as a string,
+            and f the respective feature value as bool, int or float
+    :return type: pandas.Series
+    """
+    # Do some pre-processing if needed for all parameters
+    # f is a function that calculates the feature value for each single parameter combination
+
+    return [(convert_to_output_format(config), __find_peaks_feature(x, config)) for config in param]
 
 @dataclass
 class FeatureContainer:
@@ -83,6 +116,10 @@ class FeatureContainer:
         """Reset the feature state"""
         self.feature_state = {}
 
+
+
+
+
     def compute_feature_state(self, timeseries: pd.DataFrame, cfg: dict = None, compute_for_all_features: bool = False):
         """
         Computes the feature matrix for sensor and the incumbent configuration.
@@ -104,7 +141,14 @@ class FeatureContainer:
             self.compute_feature_state(
                 timeseries, cfg=None, compute_for_all_features=True)
         kind_to_fc_parameters = self.get_feature_dictionary(
-            sensors, cfg, not compute_for_all_features)
+            sensors, cfg, not compute_for_all_features)    
+
+
+        settings = ComprehensiveFCParameters()
+        for sensor_kind_to_fc_parameters, v in kind_to_fc_parameters.items():
+            v[find_peaks_feature] = [{"p1": "test", "p2": 5}]
+        
+
         if len(kind_to_fc_parameters[sensors[0]]) > 0:
             x = extract_features(
                 timeseries, column_id="id", column_sort="time", kind_to_fc_parameters=kind_to_fc_parameters

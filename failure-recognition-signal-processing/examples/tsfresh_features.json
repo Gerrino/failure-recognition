@@ -1,6 +1,96 @@
 [
   {
     "enabled": true,
+    "name": "find_peaks_feature",
+    "input_parameters": [
+      {
+        "name": "param",
+        "type": {
+          "property_list": [
+            {
+              "name": "num_peaks",
+              "type": {
+                "range": [
+                  1,
+                  20
+                ],
+                "system_type": "int",
+                "default_value": 5
+              }
+            },
+            {
+              "name": "ts",
+              "type": {
+                "range": [
+                  0.01,
+                  1.00
+                ],
+                "system_type": "float",
+                "default_value": 0.01
+              }
+            },
+            {
+              "name": "mode",
+              "type": {
+                "range": [
+                  "distance",
+                  "threshold",
+                  "prominence"
+                ],
+                "system_type": "string",
+                "default_value": "distance"
+              }
+            },
+            {
+              "name": "x_0",
+              "type": {
+                "property_list": [
+                  {
+                    "name": "distance",
+                    "type": {
+                      "system_type": "float",
+                      "range": [
+                        1.0,
+                        100
+                      ],
+                      "default_value": 1.5
+                    }
+                  },
+                  {
+                    "name": "threshold",
+                    "type": {
+                      "system_type": "float",
+                      "range": [
+                        0.0,
+                        100
+                      ],
+                      "default_value": 1
+                    }
+                  },
+                  {
+                    "name": "prominence",
+                    "type": {
+                      "system_type": "float",
+                      "range": [
+                        0.0,
+                        100
+                      ],
+                      "default_value": 0.01
+                    }
+                  }
+                ],
+                "system_type": "dictionary"
+              }
+            }
+          ],
+          "system_type": "dictionary"
+        }
+      }
+    ],
+    "return_type": "pandas.Series"
+  },
+  {
+    "enabled": true,
     "name": "abs_energy",
     "input_parameters": [],
     "return_type": "float"
@@ -266,7 +356,7 @@
     "name": "change_quantiles",
     "input_parameters": [
       {
-        "name": "ql",       
+        "name": "ql",
         "type": {
           "default_value": 0.23,
           "range": [

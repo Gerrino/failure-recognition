@@ -30,7 +30,7 @@ def rf_from_cfg_extended(
 ):
     """
     Creates a random forest regressor from sklearn and fits the given data on it.
-    This is the function-call we try to optimize. Chosen values are stored in
+    This is the function-call we can try to optimize (smac). Chosen values are stored in
     the configuration (cfg).vnc
 
     Parameters:

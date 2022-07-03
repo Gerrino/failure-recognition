@@ -7,7 +7,7 @@ from failure_recognition.signal_processing import feature_container
 from failure_recognition.signal_processing.feature_container import FeatureContainer
 from failure_recognition.signal_processing.random_forest_from_cfg import rf_from_cfg_extended
 
-from failure_recognition.signal_processing.signal_helper import get_fft
+from failure_recognition.signal_processing.signal_helper import FindPeaksMode, get_fft, find_signal_peaks
 
 def show_fft():
     A = 2.756
@@ -22,10 +22,15 @@ def show_fft():
     plt.plot(t, signal)
     plt.show()
 
-
+    t = np.arange(0, 10, ts)
     xf, yyf = get_fft(ts, signal, 40, 60)
+
+    peaks_x, peaks_y = find_signal_peaks(xf, yyf, 5, FindPeaksMode.DISTANCE)
     plt.plot(xf, yyf)
     plt.show()
+
+
+
 
 def example_prediction():
     plt.close("all")
@@ -44,5 +49,6 @@ def example_prediction():
     pass
 
 if __name__ == "__main__":
+    # show_fft()
     example_prediction()
     pass

@@ -155,8 +155,21 @@ def find_signal_peaks(
 
     Parameters
     ----------
-    signal: np_typing.ArrayLike
+    t: ArrayLike
+        input vector if the signal
+    signal: ArrayLike
+        signal vector
+    num_peaks: int
+        max number of peaks that is reached by varying the given peaks finding parameter
+    mode: FindPeaksMode
+        specifies the variable in numpy's find_peaks method that is optimized to reach the desired number of peaks
+    x_0: dict
+        (initial) set of key word arguments that is used by numpy's find_peaks method
     number_peaks: int
+        range of the optimized parameter
+    Returns
+    -------
+    x_peak: ArrayLike, y_peak: ArrayLike
     """
     x_0 = {} if x_0 is None else x_0
     opt = binary_search(
