@@ -66,11 +66,8 @@ def rf_from_cfg_extended(
     feature_matrix = pd.concat([feature_container.feature_state.reset_index(drop=True), test_settings.reset_index(drop=True)], axis=1)
     print("Shape feature matrix: " + str(feature_matrix.shape))
     score = cross_val_score(rfr, feature_matrix, y, cv=10, scoring=rmse_scorer)
-    duration = time.time() - start_time
-    print(f"score: {score}")
+    duration = time.time() - start_time   
     print(f"Eval FeatureState: ({duration})s " + str(feature_container.feature_state.columns))
-    print("")
-    print("**")
     print(f"size of windowedTimeSeries {len(windowed_time_series)}")
     if (win_size:=cfg.get('window_size_percent')) is not None:
         print(
@@ -79,6 +76,7 @@ def rf_from_cfg_extended(
         )
     print("**")
     cost = -1 * np.mean(score)  # + 0.01 * duration
+    print(f"cost: {cost}")
     return cost  # Because cross_validation sign-flips the score
 
 

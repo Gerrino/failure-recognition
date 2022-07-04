@@ -1,6 +1,6 @@
 [
   {
-    "enabled": false,
+    "enabled": true,
     "name": "find_peaks_feature",
     "input_parameters": [
       {
@@ -9,9 +9,9 @@
           "range": [
             1,
             20
-          ],
+          ],         
           "system_type": "int",
-          "default_value": 5
+          "default_value": 4
         }
       },
       {
@@ -22,7 +22,7 @@
             1.00
           ],
           "system_type": "float",
-          "default_value": 0.01
+          "default_value": 0.001         
         }
       },
       {
@@ -38,31 +38,17 @@
         }
       },
       {
+        "name": "max_iterations",
+        "type": {
+          "range": [1, 20],
+          "system_type": "int",
+          "default_value": 20
+        }
+      },
+      {
         "name": "x_0",
         "type": {
-          "property_list": [
-            {
-              "name": "distance",
-              "type": {
-                "system_type": "float",
-                "range": [
-                  1.0,
-                  100
-                ],
-                "default_value": 1.5
-              }
-            },
-            {
-              "name": "threshold",
-              "type": {
-                "system_type": "float",
-                "range": [
-                  0.0,
-                  100
-                ],
-                "default_value": 1
-              }
-            },
+          "property_list": [     
             {
               "name": "prominence",
               "type": {
@@ -71,7 +57,7 @@
                   0.0,
                   100
                 ],
-                "default_value": 0.01
+                "default_value": 0.005
               }
             }
           ],
@@ -130,7 +116,7 @@
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "agg_linear_trend",
     "input_parameters": [
       {
@@ -459,7 +445,7 @@
     "return_type": "list"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "fft_aggregated",
     "input_parameters": [
       {

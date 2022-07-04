@@ -43,10 +43,12 @@ class MyProperty:
 
     def get_default_value(self):
         """Get the default value of the property depending on the type"""
+        if self.type.default_value is not None:
+            return self.type.default_value
         if self.type.system_type == "int":
-            return DEFAULT_INT if self.type.default_value is None else self.type.default_value
+            return DEFAULT_INT
         if self.type.system_type == "float":
-            return DEFAULT_FLOAT if self.type.default_value is None else self.type.default_value
+            return DEFAULT_FLOAT
         if self.type.system_type == "string":
             return self.type.range[0]
 
