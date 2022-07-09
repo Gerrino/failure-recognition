@@ -2,6 +2,7 @@ import math
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+
 from failure_recognition.signal_processing import PATH_DICT
 from failure_recognition.signal_processing import feature_container
 from failure_recognition.signal_processing.feature_container import FeatureContainer
@@ -42,16 +43,18 @@ def example_prediction():
 
     container = FeatureContainer()
     container.load(PATH_DICT["features"], PATH_DICT["forest_params"])
-    #container.compute_feature_state(timeseries, cfg=None)
+    container.compute_feature_state(timeseries, cfg=None)
     cfg = {p.name: p.get_default_value()
            for p in container.random_forest_params}
     rf_from_cfg_extended(cfg, np.random.seed(
         42), timeseries, test_settings, y, container)
 
-    pass
+    return container
 
 
 if __name__ == "__main__":
+    for key in dir():
+        print(key)
     # show_fft()
     example_prediction()
     pass
