@@ -46,8 +46,8 @@ def example_prediction():
     container.compute_feature_state(timeseries, cfg=None)
     cfg = {p.name: p.get_default_value()
            for p in container.random_forest_params}
-    rf_from_cfg_extended(cfg, np.random.seed(
-        42), timeseries, test_settings, y, container)
+    # rf_from_cfg_extended(cfg, np.random.seed(
+    #     42), timeseries, test_settings, y, container)
 
     return container
 
