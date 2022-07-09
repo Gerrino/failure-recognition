@@ -11,7 +11,18 @@
             20
           ],         
           "system_type": "int",
-          "default_value": 4
+          "default_value": 16
+        }
+      },
+      {
+        "name": "f_min",
+        "type": {
+          "range": [
+            0,
+            1000
+          ],         
+          "system_type": "float",
+          "default_value": 50
         }
       },
       {

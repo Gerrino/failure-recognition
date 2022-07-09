@@ -1,6 +1,6 @@
 from setuptools import setup, find_namespace_packages
 import sys
-required = ['sklearn', 'click', 'tqdm', 'numpy', 'failure-recognition-signal-processing']
+required = ['sklearn', 'click', 'tqdm', 'numpy', 'failure-recognition-signal-processing', 'pandas']
 
 setup(
     name='failure-recognition-die-casting',

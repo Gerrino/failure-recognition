@@ -125,28 +125,26 @@ class FindPeaksMode(Enum):
 
 def __find_peaks_feature(x, param: Dict[str, str]):
     """Function to calculate a feature vector from fft peaks and combine it with tsfresh parameters """
-    param = dict(param)
-    ts = param["ts"]
-    num_peaks = param["num_peaks"]
-    xf, yyf = get_fft(ts, x, 50)
+    sub_peaks = 1
     mode = FindPeaksMode.PROMINENCE
     if param["mode"].lower() == "distance":
         mode = FindPeaksMode.DISTANCE
     elif param["mode"].lower() == "threshold":
         mode = FindPeaksMode.THRESHOLD
-    peaks_x, peaks_y = find_signal_peaks(
-        xf, yyf, num_peaks=num_peaks, mode=mode, x_0=dict(param["x_0"]), max_iterations=param["max_iterations"])
-    if peaks_x.shape[0] < num_peaks:
-        peaks_x, peaks_y = np.pad(peaks_x, (num_peaks-peaks_x.shape[0], 0), 'constant'), \
-            np.pad(peaks_y, (num_peaks-peaks_y.shape[0], 0), 'constant')
-    if peaks_x.shape[0] > num_peaks:
-        peaks_x, peaks_y = peaks_x[:num_peaks], peaks_y[:num_peaks]
-    peaks_x = peaks_x / np.median(xf)
-    peaks_y = peaks_y / np.median(yyf)
-    peaks_x_y = np.concatenate((peaks_x, peaks_y), dtype=x.dtype)
-    if peaks_x_y.shape != (num_peaks * 2,):
-        raise Exception("")
-    return peaks_x_y
+    param = dict(param)
+    ts = param["ts"]
+    num_peaks = param["num_peaks"]
+    xf, yyf = get_fft(ts, x, param["f_min"])
+    all_peaks_y = []
+    chunk_size = len(xf) // num_peaks
+    for i in range(len(xf) // chunk_size):
+        part_xf, part_yyf = xf[i*chunk_size:(i+1)*chunk_size], yyf[i*chunk_size:(i+1)*chunk_size]
+        peak_x, peak_y = find_signal_peaks(part_xf, part_yyf, num_peaks=sub_peaks, mode=mode, x_0=dict(
+            param["x_0"]), max_iterations=param["max_iterations"])
+        peak_x, peak_y = 0 if len(peak_x) == 0 else peak_x[0], 0 if len(peak_y) == 0 else peak_y[0]
+        peak_x, peak_y = peak_x / np.median(xf), peak_y / np.median(yyf)
+        all_peaks_y.append(peak_y)   
+    return all_peaks_y
 
 
 @set_property("fctype", "combiner")
@@ -164,9 +162,10 @@ def find_peaks_feature(x, param):
             and f the respective feature value as bool, int or float
     :return type: pandas.Series
     """
-    #return [(convert_to_output_format(config), __find_peaks_feature(x, config)) for config in param]
+    # return [(convert_to_output_format(config), __find_peaks_feature(x, config)) for config in param]
     peaks_x_y = __find_peaks_feature(x, param[0])
-    result = [(convert_to_output_format(param[0].update({"no": i}) or param[0]), peak)  for i, peak in enumerate(peaks_x_y)]
+    result = [(convert_to_output_format(param[0].update(
+        {"no": i}) or param[0]), peak) for i, peak in enumerate(peaks_x_y)]
     return result
 
 
