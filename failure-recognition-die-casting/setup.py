@@ -1,6 +1,6 @@
 from setuptools import setup, find_namespace_packages
 import sys
-required = ['sklearn', 'click', 'tqdm', 'numpy', 'failure-recognition-signal-processing', 'pandas']
+required = ['sklearn', 'click', 'tqdm', 'numpy', 'failure-recognition-signal-processing', 'pandas', 'graphviz']
 
 setup(
     name='failure-recognition-die-casting',
@@ -10,3 +10,4 @@ setup(
        'dev': ['pylint', 'black', 'sphinx'],     
    }
 )
+#winget install graphviz

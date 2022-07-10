@@ -1,3 +1,3 @@
 PATH_DICT = {
-    "buehler": ".\examples\dataset_bue\\buehler_data_classification_20210518.tsv"
+    "bue": ".\examples\dataset_bue\\bue_data_classification_20210518.tsv"
 }
