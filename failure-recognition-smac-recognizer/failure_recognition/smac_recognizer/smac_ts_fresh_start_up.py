@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import failure_recognition.signal_processing.random_forest_from_cfg as random_forest_from_cfg
 from smac.scenario.scenario import Scenario
-from failure_recognition.smac_recognizer import PATH_DICT, SCENARIO_DICT
+from failure_recognition.smac_recognizer import PATH_DICT, SCENARIO_DICT, SMAC_SEED
 
 import smac_tsfresh
 
@@ -26,7 +26,7 @@ test_settings.index += 1
     SCENARIO_DICT,
     window_size=2,
     overlap=0,
-    seed=np.random.RandomState(42),
+    seed=np.random.RandomState(SMAC_SEED),
     window_size_ratio=0.2,
 )
 
@@ -34,11 +34,22 @@ featureState = feature_container.feature_state
 history = feature_container.history.reset_index()
 y_pred, importances = random_forest_from_cfg.get_prediction(
     incumbent,
-    np.random.RandomState(42),
+    np.random.RandomState(SMAC_SEED),
     feature_container,
     timeseries,
     test_settings,
     y,
+    window_size_ratio=0.2,
+)
+
+featureState = feature_container.feature_state
+history = feature_container.history.reset_index()
+y_pred, importances = random_forest_from_cfg.get_prediction(
+    incumbent,
+    np.random.RandomState(SMAC_SEED),
+    feature_container,
+    timeseries,
+    test_settings,
     timeseries.query("id <= 50"),
     test_settings[:50],
 )

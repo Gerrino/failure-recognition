@@ -90,6 +90,13 @@ def get_prediction(
     x_test: pd.DataFrame,
     test_settings_test: pd.DataFrame,
 ):
+    """
+    Calculate the feature state given the training data, and the test data for all features.
+    Fit a random forest regressor to the feature state (training set) and return the predicted output for the test data
+    
+    Returns
+    ---
+    y_pred: DataFrame, importances"""
     rfr = get_rfr(cfg, seed)
     feature_container.reset_feature_state()
     feature_container.compute_feature_state(x_train, cfg, compute_for_all_features=True)
@@ -104,6 +111,13 @@ def get_prediction(
 
 
 def get_rfr(cfg: dict, seed: int):
+    """
+    Create a random forest regrssion pipeline
+
+    Returns
+    ---
+    p: pipeline
+    """
     return make_pipeline(
         StandardScaler(),
         RandomForestRegressor(

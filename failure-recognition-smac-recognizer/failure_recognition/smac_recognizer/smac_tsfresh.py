@@ -9,7 +9,7 @@ Created on Tue Aug 10 02:05:17 2021
 from argparse import ArgumentError
 import logging
 from pathlib import Path
-from typing import List, Union
+from typing import List, Tuple, Union
 import ConfigSpace
 import numpy as np
 from ConfigSpace.hyperparameters import (
@@ -29,6 +29,8 @@ import datetime
 
 
 def hyperparameter_from_type(name: str, type: MyType, default_value) -> ConfigSpace.hyperparameters:
+    """Create a hyperparameter object for the given type and initialized with the given default value
+    """
     default_value = type.default_value if default_value is None else default_value
     if type.system_type == "int":
         return UniformIntegerHyperparameter(name, *type.range, default_value=default_value)
@@ -62,6 +64,8 @@ def create_smac(
     seed,
     window_size_ratio,
 ) -> SMAC4HPO:
+    """Create a smac optimization object using the the optimized random forest regressor
+    """
     def rf_from_cfg(cfg, seed): return (
         rf_from_cfg_extended(
             cfg, seed, timeseries, test_settings, y, feature_container, window_size_ratio
@@ -79,8 +83,9 @@ def create_smac(
     return smac
 
 
-def load_feature_container(path_feat_list: Union[Path, str], path_random_forest: Union[Path, str]):
-    """Create the feature container using a tsfresh feature list"""
+def load_feature_container(path_feat_list: Union[Path, str], path_random_forest: Union[Path, str]) -> FeatureContainer:
+    """Create the feature container using a tsfresh feature list
+    """
     feature_container = FeatureContainer()
     feature_container.load(path_feat_list, path_random_forest)
     print()
@@ -97,6 +102,7 @@ def load_feature_container(path_feat_list: Union[Path, str], path_random_forest:
 
 
 def register_logger():
+    """Create the logging object (INFO)"""
     logger = logging.getLogger("RF-example")
     logging.basicConfig(level=logging.INFO)
     # logging.basicConfig(level=logging.DEBUG)  # Enable to show debug-output
@@ -107,6 +113,8 @@ def register_logger():
 
 
 def register_hyperparameters(feature_container, cs, sensors):
+    """Register the hyperparameters in the given configuration state for very sensor
+    """
     for sensor in sensors:
         for f in filter(lambda f: f.enabled, feature_container.feature_list):
             for i in f.input_parameters:
@@ -115,7 +123,10 @@ def register_hyperparameters(feature_container, cs, sensors):
                 cs.add_hyperparameters(hyp)
 
 
-def create_configuration_space(feature_container, sensors):
+def create_configuration_space(feature_container, sensors) -> ConfigurationSpace:
+    """Create a smac configuration space object using the incumbent state, the
+    window parameters and random forest parameters
+    """
     cs = ConfigurationSpace()
     register_decision_tree_hyperparams(
         cs, feature_container.random_forest_params, feature_container.incumbent)
@@ -137,6 +148,30 @@ def smac_tsfresh_optimize(
     seed,
     window_size_ratio,
 ):
+    """
+    Performs the optimization problem on timeseries using smac given a feature window
+
+    Parameters
+    ---
+    timeseries: pd.DataFrame
+        time series
+    test_settings: pd.Dat   aFrame
+        test settings corresponding to the time series
+    y: pd.DataFrame
+        label data frame
+    feature_container: FeatureContainer
+        feature container object with the current feature state
+    scenario_dict: dict
+        dictionary containing special options for smac e.g. memory limit
+    seed: float
+        seed for the smac opt
+    window_size_ratio: float
+        #window_featuers / #all_features
+
+    Returns
+    ---
+    incumbent: dict
+    """
     sensors = timeseries.columns[2:]
     feature_list = feature_container.feature_list
     date_time_opt_start = datetime.datetime.now()
@@ -197,14 +232,40 @@ def smac_tsfresh_optimize(
 def smac_tsfresh_window_opt(
     timeseries: pd.DataFrame,
     test_settings: pd.DataFrame,
-    y,
-    path_dict,
-    scenario_dict,
-    window_size,
-    overlap,
-    seed,
-    window_size_ratio,
-):
+    y: pd.DataFrame,
+    path_dict: dict,
+    scenario_dict: dict,
+    window_size: int,
+    overlap: int,
+    seed: float,
+    window_size_ratio: float,
+) -> Tuple[dict, FeatureContainer]:
+    """
+    Performs the optimization problem on timeseries using smac and a feature window
+
+    Parameters
+    ---
+    timeseries: pd.DataFrame
+        time series
+    test_settings: pd.Dat   aFrame
+        test settings corresponding to the time series
+    y: pd.DataFrame
+        label data frame
+    path_dict: dict
+        dictionary containing paths for feature and random forest parameters
+    window_size: int
+        size of the feature window
+    overlap: int
+        feature overlap
+    seed: float
+        seed for the smac opt
+    window_size_ratio: float
+        #window_featuers / #all_features
+
+    Returns
+    ---
+    incumbent: dict, feature_container: FeatureContainer
+    """
     print(
         f"Starting Optimization window_size: {window_size}, overlap: {overlap}")
     feature_container = load_feature_container(

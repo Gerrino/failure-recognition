@@ -1,6 +1,6 @@
 """Init module for the smac-recognizer"""
 
-
+SMAC_SEED = 42
 
 PATH_DICT = {
     "features": "./examples/tsfresh_features.json",
