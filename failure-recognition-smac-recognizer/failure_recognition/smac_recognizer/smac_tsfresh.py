@@ -62,7 +62,7 @@ def create_smac(
     feature_container,
     scenario_dict,
     seed,
-    window_size_ratio,
+    window_size_ratio
 ) -> SMAC4HPO:
     """Create a smac optimization object using the the optimized random forest regressor
     """
@@ -78,15 +78,15 @@ def create_smac(
         scenario=scenario,
         rng=seed,
         tae_runner=rf_from_cfg,
-        initial_design=LHDesign,
+        initial_design=LHDesign
     )
     return smac
 
 
-def load_feature_container(path_feat_list: Union[Path, str], path_random_forest: Union[Path, str]) -> FeatureContainer:
+def load_feature_container(path_feat_list: Union[Path, str], path_random_forest: Union[Path, str], logger: logging.Logger) -> FeatureContainer:
     """Create the feature container using a tsfresh feature list
     """
-    feature_container = FeatureContainer()
+    feature_container = FeatureContainer(logger=logger)
     feature_container.load(path_feat_list, path_random_forest)
     print()
     print(
@@ -103,9 +103,8 @@ def load_feature_container(path_feat_list: Union[Path, str], path_random_forest:
 
 def register_logger():
     """Create the logging object (INFO)"""
-    logger = logging.getLogger("RF-example")
+    logger = logging.getLogger("SmacOpt")
     logging.basicConfig(level=logging.INFO)
-    # logging.basicConfig(level=logging.DEBUG)  # Enable to show debug-output
     logger.info(
         "Running random forest example for SMAC. If you experience " "difficulties, try to decrease the memory-limit."
     )
@@ -267,7 +266,7 @@ def smac_tsfresh_window_opt(
     print(
         f"Starting Optimization window_size: {window_size}, overlap: {overlap}")
     feature_container = load_feature_container(
-        path_dict["features"], path_dict["forest_params"])
+        path_dict["features"], path_dict["forest_params"], logger=register_logger())
     print("Compute feature state for parameterless features")
     feature_container.compute_feature_state(
         timeseries, cfg=None)  # get default feature matrix
@@ -286,7 +285,6 @@ def smac_tsfresh_window_opt(
         raise Exception(
             "FATAL ERROR: Overlap must be smaller than window_size!")
     window_start_pntr = 0
-    logger = register_logger()
     tot_it = round(
         min(1, np.ceil(enabled_feature_count / window_size))
         + max(0, np.ceil((enabled_feature_count - window_size) / incr))

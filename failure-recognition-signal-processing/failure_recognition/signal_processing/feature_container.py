@@ -2,6 +2,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 import json
+import logging
 from pathlib import Path
 from typing import List, Union
 
@@ -23,6 +24,7 @@ class FeatureContainer:
     --------
     Feature class, e.g. agg_ autocorrelation
     """
+    logger: logging.Logger = None
     feature_list: List[Feature] = field(default_factory=list)
     incumbent: dict = field(default_factory=dict)
     feature_state: pd.DataFrame = field(default_factory=pd.DataFrame)
@@ -30,6 +32,8 @@ class FeatureContainer:
     random_forest_params: List[MyProperty] = field(default_factory=list)
 
     def __post_init__(self):
+        if self.logger is None:
+            self.logger = logging.getLogger("FEAT_CONT_LOGGER")
         self.history = pd.DataFrame(
             {
                 "datetime": [datetime.datetime.now()],
@@ -60,19 +64,17 @@ class FeatureContainer:
             self.feature_state = {}
             self.feature_state = new_sensor_state
             return
-        old_cols_cnt = len(self.feature_state.columns)
-        
+        old_cols_cnt = len(self.feature_state.columns)        
 
         if drop_param_col:
             parameter_feat = [f for f in self.feature_list if len(f.input_parameters) > 0]   
             parameter_columns = [c for c in self.feature_state.columns for f in parameter_feat if f"__{f.name}" in c]
             self.feature_state = self.feature_state.drop(parameter_columns, axis=1)
-
         
         for overwrite_col in [c for c in new_sensor_state.columns if c in self.feature_state.columns]:
             del self.feature_state[overwrite_col]
         self.feature_state = pd.concat([self.feature_state, new_sensor_state], axis=1)
-        print(f"update with {old_cols_cnt} => {len(self.feature_state.columns)}")
+        self.logger.debug(f"Column update: {old_cols_cnt} => {len(self.feature_state.columns)}")
 
     def load(self, tsfresh_features: Union[Path, str], random_forest_parameters: Union[Path, str]):
         """Load features/rf params from file"""

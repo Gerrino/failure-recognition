@@ -39,17 +39,6 @@ y_pred, importances = random_forest_from_cfg.get_prediction(
     timeseries,
     test_settings,
     y,
-    window_size_ratio=0.2,
-)
-
-featureState = feature_container.feature_state
-history = feature_container.history.reset_index()
-y_pred, importances = random_forest_from_cfg.get_prediction(
-    incumbent,
-    np.random.RandomState(SMAC_SEED),
-    feature_container,
-    timeseries,
-    test_settings,
     timeseries.query("id <= 50"),
     test_settings[:50],
 )
@@ -64,4 +53,4 @@ print("_____________________________________")
 print()
 print(f"Windowed Optimization finished in {(history['datetime'].max() - history['datetime'].min()).seconds} seconds!")
 print()
-print(incumbent)
+print("incumbent: ", incumbent)

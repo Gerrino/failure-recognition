@@ -5,6 +5,7 @@ Created on Fri Aug 13 14:16:42 2021
 
 @author: gerritnoske
 """
+import logging
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -27,6 +28,7 @@ def rf_from_cfg_extended(
     y: pd.DataFrame,
     feature_container: FeatureContainer,
     window_size_ratio: float = None,
+    logger: logging.Logger = None
 ) -> float:
     """
     Creates a random forest regressor from sklearn and fits the given data on it.
@@ -46,6 +48,7 @@ def rf_from_cfg_extended(
         mean of root mean square errors of random-forest test predictions
         per cv-fold
     """
+    logger = feature_container.logger if logger is None else logger
     max_time = max(timeseries["time"])
     windowed_time_series, window_left, window_right = timeseries, 0, max_time   
     if window_size_ratio is not None:
@@ -64,22 +67,20 @@ def rf_from_cfg_extended(
     # Creating root mean square error for sklearns crossvalidation
     rmse_scorer = make_scorer(rmse, greater_is_better=False)
     feature_matrix = pd.concat([feature_container.feature_state.reset_index(drop=True), test_settings.reset_index(drop=True)], axis=1)
-    print("Shape feature matrix: " + str(feature_matrix.shape))
+    logger.debug(f"Shape feature matrix: {feature_matrix.shape}")
     score = cross_val_score(rfr, feature_matrix, y, cv=10, scoring=rmse_scorer)
     duration = time.time() - start_time
-    print(f"score: {score}")
-    print(f"Eval FeatureState: ({duration})s " + str(feature_container.feature_state.columns))
-    print("")
-    print("**")
-    print(f"size of windowedTimeSeries {len(windowed_time_series)}")
+    cost = -1 * np.mean(score)  # + 0.01 * duration
+    logger.info(f"cost: {cost} | mean-score: {np.mean(score)}")
+    logger.debug(f"eval feature state: ({duration})s, columns: {feature_container.feature_state.columns}")
+    logger.debug("")
+    logger.debug("**")
+    logger.debug(f"size of windowed time series {len(windowed_time_series)}")
     if (win_size:=cfg.get('window_size_percent')) is not None:
-        print(
+        logger.debug(
             f"Size {win_size} Duration {round(duration)}s, window_left:{window_left}, "
             f"window_right:{window_right}/{max_time}"
-        )
-    print("**")
-    cost = -1 * np.mean(score)  # + 0.01 * duration
-    print(f"cost: {cost}")
+        ) 
     return cost  # Because cross_validation sign-flips the score
 
 
@@ -89,7 +90,7 @@ def get_prediction(
     feature_container: FeatureContainer,
     x_train: pd.DataFrame,
     test_settings_train: pd.DataFrame,
-    y_train: pd.DataFrame,
+    y_train: pd.DataFrame, 
     x_test: pd.DataFrame,
     test_settings_test: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, any]:
