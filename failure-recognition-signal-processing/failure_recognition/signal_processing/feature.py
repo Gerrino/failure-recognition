@@ -38,6 +38,9 @@ class Feature:
         return f"Feature '{self.name}'"
 
     def get_parameter_dict(self, cfg, sensor) -> dict:
+        """Get the parameter dict of the feature with all 
+        key-value pairs of the input parameters
+        """
         parameter_dict = {}
         for input_param in self.input_parameters:
             parameter_dict.update(input_param.get_key_value_pair(cfg, sensor))

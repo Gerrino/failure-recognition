@@ -3,7 +3,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Generic, List, TypeVar
-from unicodedata import name
 from failure_recognition.signal_processing import (
     DEFAULT_FLOAT,
     DEFAULT_INT,

@@ -45,7 +45,7 @@ class FeatureContainer:
 
     def column_update(self, new_sensor_state: pd.DataFrame):
         """
-        adds columns from newDFState that do not exist in feature_state to feature_state.
+        Add columns from newDFState that do not exist in feature_state to feature_state.
         updates columns from newDFState if they do exist in feature_state
         """
         if len(new_sensor_state) == 0:
@@ -67,6 +67,7 @@ class FeatureContainer:
         print(f"update with {old_cols} => {len(self.feature_state.columns)}")
 
     def load(self, tsfresh_features: Union[Path, str], random_forest_parameters: Union[Path, str]):
+        """Load features/rf params from file"""
         with open(tsfresh_features, 'r', encoding="utf-8") as features_file:
             feature_list = json.load(features_file)
         for feature in feature_list:
@@ -125,6 +126,13 @@ class FeatureContainer:
         (including the incumbent hyperparameter values).
         cfg given: get feature dict for all features with at least one hyperparam.
         cfg not given: get feature dict for all features (use default values for features with hyperparameters)
+        
+        Returns
+        ---
+        "sensor_0": 
+            "feature_0":
+                "input_var_0": designated_value
+        ...
         """
         feature_dict = {}
         for sensor in sensors:
