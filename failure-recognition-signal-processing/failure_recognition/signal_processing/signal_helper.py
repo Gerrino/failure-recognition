@@ -165,7 +165,7 @@ def find_peaks_feature(x, param):
     # return [(convert_to_output_format(config), __find_peaks_feature(x, config)) for config in param]
     peaks_x_y = __find_peaks_feature(x, param[0])
     result = [(convert_to_output_format(param[0].update(
-        {"no": i}) or param[0]), peak) for i, peak in enumerate(peaks_x_y)]
+        {"coeff": i}) or param[0]), peak) for i, peak in enumerate(peaks_x_y)]
     return result
 
 

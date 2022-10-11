@@ -15,7 +15,6 @@ from failure_recognition.signal_processing.my_property import MyProperty
 from failure_recognition.signal_processing.signal_helper import find_peaks_feature
 
 
-
 @dataclass
 class FeatureContainer:
     """Container class for tsfresh features
@@ -43,10 +42,17 @@ class FeatureContainer:
     def __str__(self):
         return f"Feature Container with {len(self.feature_list)} elements"
 
-    def column_update(self, new_sensor_state: pd.DataFrame):
+    def column_update(self, new_sensor_state: pd.DataFrame, drop_param_col: bool = True):
         """
         Add columns from newDFState that do not exist in feature_state to feature_state.
-        updates columns from newDFState if they do exist in feature_state
+        updates columns from newDFState if they do exist in feature_state.
+        
+        Parameters
+        ---
+        new_sensor_state:
+            Data frame with feature columns
+        drop_param_col:
+            Drop columns belonging to features with parameters to make place for updated columns
         """
         if len(new_sensor_state) == 0:
             return
@@ -54,17 +60,19 @@ class FeatureContainer:
             self.feature_state = {}
             self.feature_state = new_sensor_state
             return
-        # if not sensor in self.feature_state:
-        # self.feature_state = newSensorState
-        # return
-        old_cols = len(self.feature_state.columns)
+        old_cols_cnt = len(self.feature_state.columns)
+        
 
-        for col2_name in filter(lambda c2: (c2 in self.feature_state.columns), new_sensor_state.columns):
-            del self.feature_state[col2_name]
-        for col2_name in filter(lambda c2: not c2 in self.feature_state.columns, new_sensor_state.columns):
-            self.feature_state = pd.concat(
-                [self.feature_state, new_sensor_state[col2_name]], axis=1)
-        print(f"update with {old_cols} => {len(self.feature_state.columns)}")
+        if drop_param_col:
+            parameter_feat = [f for f in self.feature_list if len(f.input_parameters) > 0]   
+            parameter_columns = [c for c in self.feature_state.columns for f in parameter_feat if f"__{f.name}" in c]
+            self.feature_state = self.feature_state.drop(parameter_columns, axis=1)
+
+        
+        for overwrite_col in [c for c in new_sensor_state.columns if c in self.feature_state.columns]:
+            del self.feature_state[overwrite_col]
+        self.feature_state = pd.concat([self.feature_state, new_sensor_state], axis=1)
+        print(f"update with {old_cols_cnt} => {len(self.feature_state.columns)}")
 
     def load(self, tsfresh_features: Union[Path, str], random_forest_parameters: Union[Path, str]):
         """Load features/rf params from file"""
@@ -105,13 +113,12 @@ class FeatureContainer:
             self.compute_feature_state(
                 timeseries, cfg=None, compute_for_all_features=True)
         kind_to_fc_parameters = self.get_feature_dictionary(
-            sensors, cfg, not compute_for_all_features)
+            sensors, cfg, not compute_for_all_features)    
 
-        for _, v in kind_to_fc_parameters.items():
+        for v in kind_to_fc_parameters.values():
             if "find_peaks_feature" not in v:
                 continue
-            v[find_peaks_feature] = v["find_peaks_feature"]
-            v.pop("find_peaks_feature")
+            v[find_peaks_feature] = v.pop("find_peaks_feature")            
 
         if len(kind_to_fc_parameters[sensors[0]]) > 0:
             x = extract_features(
@@ -125,7 +132,7 @@ class FeatureContainer:
         This method returns a dictionary providing information of all features per sensor and their hyperparameters
         (including the incumbent hyperparameter values).
         cfg given: get feature dict for all features with at least one hyperparam.
-        cfg not given: get feature dict for all features (use default values for features with hyperparameters)
+        cfg not given: get feature dict for all features (use default values for features with hyperparameters)        
         
         Returns
         ---

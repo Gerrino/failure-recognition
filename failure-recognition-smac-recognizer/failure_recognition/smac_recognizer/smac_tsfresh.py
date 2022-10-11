@@ -184,13 +184,11 @@ def smac_tsfresh_optimize(
             lambda f: f.enabled and len(f.input_parameters) > 0,
             feature_container.feature_list,
         ):  # drop existing default values of enabled features
-            print("will it drop")
             drop_name = None
             for col_name in feature_container.feature_state.columns:
                 drop_name = col_name if col_name.startswith(
                     f"{sensor}__{f.name}__") else drop_name
             if drop_name is not None:
-                print("try dropping" + drop_name)
                 feature_container.feature_state = feature_container.feature_state.drop(
                     drop_name, axis=1)
     cs = create_configuration_space(feature_container, sensors)

@@ -6,10 +6,10 @@ Created on Fri Aug 13 14:16:42 2021
 @author: gerritnoske
 """
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from sklearn import datasets
+from typing import Tuple
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import cross_val_score
 import numpy as np
@@ -27,7 +27,7 @@ def rf_from_cfg_extended(
     y: pd.DataFrame,
     feature_container: FeatureContainer,
     window_size_ratio: float = None,
-):
+) -> float:
     """
     Creates a random forest regressor from sklearn and fits the given data on it.
     This is the function-call we can try to optimize (smac). Chosen values are stored in
@@ -66,8 +66,11 @@ def rf_from_cfg_extended(
     feature_matrix = pd.concat([feature_container.feature_state.reset_index(drop=True), test_settings.reset_index(drop=True)], axis=1)
     print("Shape feature matrix: " + str(feature_matrix.shape))
     score = cross_val_score(rfr, feature_matrix, y, cv=10, scoring=rmse_scorer)
-    duration = time.time() - start_time   
+    duration = time.time() - start_time
+    print(f"score: {score}")
     print(f"Eval FeatureState: ({duration})s " + str(feature_container.feature_state.columns))
+    print("")
+    print("**")
     print(f"size of windowedTimeSeries {len(windowed_time_series)}")
     if (win_size:=cfg.get('window_size_percent')) is not None:
         print(
@@ -89,7 +92,7 @@ def get_prediction(
     y_train: pd.DataFrame,
     x_test: pd.DataFrame,
     test_settings_test: pd.DataFrame,
-):
+) -> Tuple[pd.DataFrame, any]:
     """
     Calculate the feature state given the training data, and the test data for all features.
     Fit a random forest regressor to the feature state (training set) and return the predicted output for the test data
@@ -110,7 +113,7 @@ def get_prediction(
     return y_pred, importances
 
 
-def get_rfr(cfg: dict, seed: int):
+def get_rfr(cfg: dict, seed: int) -> Pipeline:
     """
     Create a random forest regrssion pipeline
 
