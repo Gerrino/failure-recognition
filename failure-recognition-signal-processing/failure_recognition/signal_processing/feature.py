@@ -27,7 +27,8 @@ class Feature:
     def from_json(cls, json_obj: dict) -> Feature:
         feature = cls(**json_obj)
         feature.input_parameters = [MyProperty.from_json(p, feature.name) for p in list(feature.input_parameters)]
-        feature.coefficients = MyProperty.from_json(feature.coefficients, feature.name)
+        if feature.coefficients is not None:
+            feature.coefficients = MyProperty.from_json(feature.coefficients, feature.name)
         return feature
 
     def __str__(self):

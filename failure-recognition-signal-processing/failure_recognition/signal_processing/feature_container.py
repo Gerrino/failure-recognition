@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Callable, Dict, List, Union
 
 from failure_recognition.signal_processing import PATH_DICT
 from failure_recognition.signal_processing.feature import Feature
@@ -30,10 +30,12 @@ class FeatureContainer:
     feature_state: pd.DataFrame = field(default_factory=pd.DataFrame)
     history: pd.DataFrame = field(default_factory=pd.DataFrame)
     random_forest_params: List[MyProperty] = field(default_factory=list)
+    custom_features: Dict[str, Callable] = field(default_factory=dict)
 
     def __post_init__(self):
         if self.logger is None:
             self.logger = logging.getLogger("FEAT_CONT_LOGGER")
+        self.custom_features["find_peaks_feature"] = find_peaks_feature
         self.history = pd.DataFrame(
             {
                 "datetime": [datetime.datetime.now()],
@@ -45,6 +47,11 @@ class FeatureContainer:
 
     def __str__(self):
         return f"Feature Container with {len(self.feature_list)} elements"
+
+    @property
+    def enabled_features(self) -> List[Feature]:
+        """Get all enabled features"""
+        return [f for f in self.feature_list if f.enabled]
 
     def column_update(self, new_sensor_state: pd.DataFrame, drop_param_col: bool = True):
         """
@@ -138,14 +145,12 @@ class FeatureContainer:
             "feature_0":
                 "input_var_0": designated_value
         ...
-        """
-        custom_features = {"find_peaks_feature": find_peaks_feature}
-        enabled_features = [f for f in self.feature_list if f.enabled]
-        param_less_features, param_features = []
+        """        
+        param_less_features, param_features = [], []
         if param_less:
-            param_less_features = [f for f in enabled_features if len(f.input_parameters) == 0]
+            param_less_features = [f for f in self.enabled_features if len(f.input_parameters) == 0]
         if with_param:
-            param_features = [f for f in enabled_features if len(f.input_parameters) > 0]
+            param_features = [f for f in self.enabled_features if len(f.input_parameters) > 0]
 
         def merge_with_coeffi(feat: Feature, params: Union[dict, None]) -> List[Dict]:
             """Return a list of param dicts for all coefficients"""
@@ -176,7 +181,7 @@ class FeatureContainer:
                 param_dict = feat.get_parameter_dict(cfg, sensor)
                 feature_dict[sensor][feat.name] = merge_with_coeffi(feat, param_dict)
 
-            for name, func in custom_features.items():
+            for name, func in self.custom_features.items():
                 if name in feature_dict[sensor]:
                     feature_dict[sensor][func] = feature_dict[sensor].pop(name)
 

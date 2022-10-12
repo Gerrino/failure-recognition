@@ -28,7 +28,7 @@
       {
         "name": "mode",
         "type": {
-          "range": [
+          "values": [
             "distance",
             "threshold",
             "prominence"
@@ -106,7 +106,7 @@
       {
         "name": "f_agg",
         "type": {
-          "range": [
+          "values": [
             "mean",
             "var",
             "std",
@@ -136,7 +136,7 @@
       {
         "name": "attr",
         "type": {
-          "range": [
+          "values": [
             "pvalue",
             "rvalue",
             "intercept",
@@ -159,7 +159,7 @@
       {
         "name": "f_agg",
         "type": {
-          "range": [
+          "values": [
             "max",
             "min",
             "mean",
@@ -232,7 +232,7 @@
       {
         "name": "attr",
         "type": {
-          "range": [
+          "values": [
             "teststat",
             "pvalue",
             "usedlag"
@@ -243,7 +243,7 @@
       {
         "name": "autolag",
         "type": {
-          "range": [
+          "values": [
             "AIC",
             "BIC",
             "t-stats"
@@ -346,7 +346,7 @@
       {
         "name": "f_agg",
         "type": {
-          "range": [
+          "values": [
             "mean",
             "std",
             "var",
@@ -465,7 +465,7 @@
       {
         "name": "aggtype",
         "type": {
-          "range": [
+          "values": [
             "centroid",
             "variance",
             "skew",
@@ -494,7 +494,7 @@
       {
         "name": "attr",
         "type": {
-          "range": [
+          "values": [
             "real",
             "imag",
             "abs",
@@ -653,7 +653,7 @@
       {
         "name": "attr",
         "type": {
-          "range": [],
+          "values": [],
           "system_type": "string"
         }
       }
@@ -667,7 +667,7 @@
       {
         "name": "attr",
         "type": {
-          "range": [],
+          "values": [],
           "system_type": "string"
         }
       }

@@ -50,16 +50,21 @@ class MyProperty:
             return DEFAULT_FLOAT
         if self.type.system_type == "string":
             return self.type.range[0]
+        if self.type.system_type == "array":
+            return self.get_values()
+
 
     def get_range(self, i: int = None) -> list:
         """Get this properties range items e.g. "[min, max]" for number types)"""
         out_range = self.type.range
+        if out_range is None:
+            return []
         if len(self.type.range) == 2 and self.type.range[0] == 0 and self.type.range[1] == 0:
             if self.type.system_type == "int":
                 out_range = [DEFAULT_MIN_INT, DEFAULT_MAX_INT]
             if self.type.system_type == "float":
                 out_range = [DEFAULT_MIN_FLOAT, DEFAULT_MAX_FLOAT] 
-        if i >= 0:
+        if i is not None and i >= 0:
             return out_range[i]
         return out_range
 
@@ -67,7 +72,7 @@ class MyProperty:
         """Get all values from 'values' property or from the interpreted range property (not only min max)
         """
         out_values = self.get_range()
-        if len(self.type.values) > 0:
+        if self.type.values is not None and len(self.type.values) > 0:
             if len(out_values) > 0:
                 raise ValueError("get_values: range/values: only one can be specified!")
             return self.type.values
@@ -92,23 +97,37 @@ class MyProperty:
             value = cfg[self.get_id(sensor)]
         else:
             value = self.get_default_value()
+            print("default value", self.name, value)
         return {self.name: value}
 
     def get_hyper_parameter_list(self, sensor) -> list:
         import ConfigSpace.hyperparameters as smac_params
 
         default_val = self.get_default_value()
+
+        if self.type.system_type in ["int", "float", "string"]:
+            if isinstance(self.type.values, list) and len(self.type.values) > 0:    #categorical
+                return [
+                    smac_params.CategoricalHyperparameter(
+                        self.get_id(sensor),
+                        self.get_values(),
+                        default_value=default_val,
+                    )
+                ]
+
         if self.type.system_type == "int":
-            return [
-                smac_params.UniformIntegerHyperparameter(
-                    self.get_id(sensor),
-                    self.get_range(0),
-                    self.get_range(1),
-                    default_value=default_val,
-                )
-            ]
-        if self.type.system_type == "string":
-            return [smac_params.CategoricalHyperparameter(self.get_id(sensor), self.type.range, self.type.range[0])]
+            if self.type.range is not None:
+                if len(self.type.range) < 2:
+                    raise ValueError("get_hyper_parameter_list", "invalid range")
+                return [
+                    smac_params.UniformIntegerHyperparameter(
+                        self.get_id(sensor),
+                        self.get_range(0),
+                        self.get_range(1),
+                        default_value=default_val,
+                    )
+                ]
+
         if self.type.system_type == "float":
             return [
                 smac_params.UniformFloatHyperparameter(
@@ -126,6 +145,9 @@ class MyProperty:
                 hyper_parameters_of_dict.append(
                     p.get_hyper_parameter_list(sensor)[0])
             return hyper_parameters_of_dict
+        
+        print("Warning: no parameter for", self.name)
+        return []
 
     def get_id(self, sensor):
         return sensor + "__" + self.id
