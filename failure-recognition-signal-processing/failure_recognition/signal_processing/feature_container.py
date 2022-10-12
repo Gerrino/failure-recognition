@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 import json
 import logging
 from pathlib import Path
-from typing import List, Union
+from typing import Dict, List, Union
 
 from failure_recognition.signal_processing import PATH_DICT
 from failure_recognition.signal_processing.feature import Feature
@@ -111,16 +111,9 @@ class FeatureContainer:
 
         """
         sensors = timeseries.columns[2:]
-        if compute_for_all_features and cfg is not None:
-            self.compute_feature_state(
-                timeseries, cfg=None, compute_for_all_features=True)
-        kind_to_fc_parameters = self.get_feature_dictionary(
-            sensors, cfg, not compute_for_all_features)    
 
-        for v in kind_to_fc_parameters.values():
-            if "find_peaks_feature" not in v:
-                continue
-            v[find_peaks_feature] = v.pop("find_peaks_feature")            
+        kind_to_fc_parameters = self.get_feature_dictionary(sensors, cfg,  compute_for_all_features, True)    
+        print("kind_to_fc_parameters", kind_to_fc_parameters)                   
 
         if len(kind_to_fc_parameters[sensors[0]]) > 0:
             x = extract_features(
@@ -129,12 +122,15 @@ class FeatureContainer:
             X = impute(x)
             self.column_update(X)
 
-    def get_feature_dictionary(self, sensors: list, cfg: dict = None, use_default_values: bool = True) -> dict:
+    def get_feature_dictionary(self, sensors: list, cfg: dict, param_less: bool, with_param: bool) -> dict:
         """
         This method returns a dictionary providing information of all features per sensor and their hyperparameters
         (including the incumbent hyperparameter values).
-        cfg given: get feature dict for all features with at least one hyperparam.
-        cfg not given: get feature dict for all features (use default values for features with hyperparameters)        
+
+        Parameters
+        ---
+        param_less: get feature dict for parameterless features
+        with_param: get feature dict for all features with at least one hyperparameter          
         
         Returns
         ---
@@ -143,20 +139,48 @@ class FeatureContainer:
                 "input_var_0": designated_value
         ...
         """
+        custom_features = {"find_peaks_feature": find_peaks_feature}
+        enabled_features = [f for f in self.feature_list if f.enabled]
+        param_less_features, param_features = []
+        if param_less:
+            param_less_features = [f for f in enabled_features if len(f.input_parameters) == 0]
+        if with_param:
+            param_features = [f for f in enabled_features if len(f.input_parameters) > 0]
+
+        def merge_with_coeffi(feat: Feature, params: Union[dict, None]) -> List[Dict]:
+            """Return a list of param dicts for all coefficients"""
+            coeffi = feat.coefficients
+            if coeffi is None:
+                if params is None:
+                    return None
+                return [params]
+            merged_list = []
+            coeffi_values = coeffi.get_values()
+            if len(coeffi_values) == 0:
+                raise ValueError("merge_with_coeffi: Zero coefficients")
+            for value in coeffi_values:
+                value: int
+                coeffi_dict = dict(params) if params is not None else {}
+                coeffi_dict[coeffi.name] = value
+                merged_list.append(coeffi_dict)
+            return merged_list
+
         feature_dict = {}
         for sensor in sensors:
-            feature_dict[sensor] = {}
-            if cfg is not None:
-                for feat in filter(lambda f: f.enabled and len(f.input_parameters) > 0, self.feature_list):
-                    feature_dict[sensor][feat.name] = [
-                        feat.get_parameter_dict(cfg, sensor)]
-            else:
-                for feat in filter(lambda f: f.enabled and len(f.input_parameters) == 0, self.feature_list):
-                    feature_dict[sensor][feat.name] = None
-                if use_default_values:
-                    for feat in filter(lambda f: f.enabled and len(f.input_parameters) > 0, self.feature_list):
-                        feature_dict[sensor][feat.name] = [
-                            feat.get_parameter_dict(None, sensor)]
+            feature_dict[sensor] = {}          
+
+            for feat in param_less_features:
+                feature_dict[sensor][feat.name] = merge_with_coeffi(feat, None)
+  
+            for feat in param_features:
+                param_dict = feat.get_parameter_dict(cfg, sensor)
+                feature_dict[sensor][feat.name] = merge_with_coeffi(feat, param_dict)
+
+            for name, func in custom_features.items():
+                if name in feature_dict[sensor]:
+                    feature_dict[sensor][func] = feature_dict[sensor].pop(name)
+
+        print("feature_dict", feature_dict)
         return feature_dict
 
 

@@ -52,16 +52,31 @@ class MyProperty:
             return self.type.range[0]
 
     def get_range(self, i: int = None) -> list:
-        """Get this properties range itmes"""
+        """Get this properties range items e.g. "[min, max]" for number types)"""
         out_range = self.type.range
         if len(self.type.range) == 2 and self.type.range[0] == 0 and self.type.range[1] == 0:
             if self.type.system_type == "int":
                 out_range = [DEFAULT_MIN_INT, DEFAULT_MAX_INT]
             if self.type.system_type == "float":
-                out_range = [DEFAULT_MIN_FLOAT, DEFAULT_MAX_FLOAT]
+                out_range = [DEFAULT_MIN_FLOAT, DEFAULT_MAX_FLOAT] 
         if i >= 0:
             return out_range[i]
         return out_range
+
+    def get_values(self) -> list:
+        """Get all values from 'values' property or from the interpreted range property (not only min max)
+        """
+        out_values = self.get_range()
+        if len(self.type.values) > 0:
+            if len(out_values) > 0:
+                raise ValueError("get_values: range/values: only one can be specified!")
+            return self.type.values
+       
+        if self.type.system_type == "int":
+            if len(out_values) != 2:
+                raise ValueError("Expected int range list length 2")
+            out_values = list(range(out_values[0], out_values[1]))
+        return out_values
 
     def get_key_value_pair(self, cfg: dict, sensor) -> dict:
         """Get name/value dictionary of this property. if cfg contains a parameter value for
@@ -131,8 +146,7 @@ class MyType(Generic[T]):
     range: List[T] = None
     default_value: T = None
     property_list: List[MyProperty] = None
-    element_type: str = None
-    array_of_my_type: bool = None
+    values: List[T] = None
 
     @classmethod
     def from_json(cls, json_obj, id_prefix) -> MyType:
