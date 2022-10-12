@@ -72,7 +72,8 @@ class FeatureContainer:
             self.feature_state = new_sensor_state
             return
         old_cols_cnt = len(self.feature_state.columns)        
-
+        self.logger.info(f"old columns \n {self.feature_state.columns.values}")
+        self.logger.info(f"new columns \n {new_sensor_state.columns.values}")
         if drop_param_col:
             parameter_feat = [f for f in self.feature_list if len(f.input_parameters) > 0]   
             parameter_columns = [c for c in self.feature_state.columns for f in parameter_feat if f"__{f.name}" in c]
@@ -81,7 +82,9 @@ class FeatureContainer:
         for overwrite_col in [c for c in new_sensor_state.columns if c in self.feature_state.columns]:
             del self.feature_state[overwrite_col]
         self.feature_state = pd.concat([self.feature_state, new_sensor_state], axis=1)
-        self.logger.debug(f"Column update: {old_cols_cnt} => {len(self.feature_state.columns)}")
+
+        self.logger.info(f"result columns {self.feature_state.columns.values}")
+        self.logger.info(f"Column update: {old_cols_cnt} => {len(self.feature_state.columns.values)}")
 
     def load(self, tsfresh_features: Union[Path, str], random_forest_parameters: Union[Path, str]):
         """Load features/rf params from file"""
@@ -100,6 +103,10 @@ class FeatureContainer:
     def reset_feature_state(self):
         """Reset the feature state"""
         self.feature_state = {}
+
+    @property
+    def column_names(self):
+        return list(self.feature_state.columns.values)
 
     def compute_feature_state(self, timeseries: pd.DataFrame, cfg: dict = None, compute_for_all_features: bool = False):
         """
@@ -120,7 +127,7 @@ class FeatureContainer:
         sensors = timeseries.columns[2:]
 
         kind_to_fc_parameters = self.get_feature_dictionary(sensors, cfg,  compute_for_all_features, True)    
-        print("kind_to_fc_parameters", kind_to_fc_parameters)                   
+        #print("kind_to_fc_parameters", kind_to_fc_parameters)                   
 
         if len(kind_to_fc_parameters[sensors[0]]) > 0:
             x = extract_features(
@@ -185,7 +192,7 @@ class FeatureContainer:
                 if name in feature_dict[sensor]:
                     feature_dict[sensor][func] = feature_dict[sensor].pop(name)
 
-        print("feature_dict", feature_dict)
+        #print("feature_dict", feature_dict)
         return feature_dict
 
 

@@ -51,7 +51,7 @@ def register_decision_tree_hyperparams(cs, type_parameters: List[MyProperty], in
         p.type, incumbent.get(p.name)) for p in type_parameters]
 
     cs.add_hyperparameters(hyper_parameters)
-    print(str(cs))
+    print("register_decision_tree_hyperparams", str(cs))
 
 
 def create_smac(
@@ -269,44 +269,38 @@ def smac_tsfresh_window_opt(
         path_dict["features"], path_dict["forest_params"], logger=register_logger())
     print("Compute feature state for parameterless features")
     feature_container.compute_feature_state(
-        timeseries, cfg=None)  # get default feature matrix
+        timeseries, cfg=None, compute_for_all_features=True)  # get default feature matrix
     feature_list = feature_container.feature_list
-    all_enabled_features = list(
-        filter(lambda f: f.enabled, feature_container.feature_list))
-    enabled_features = list(
-        filter(
-            lambda f: f.enabled and len(f.input_parameters) > 0,
-            feature_container.feature_list,
-        )
-    )
-    enabled_feature_count = len(enabled_features)
+    all_enabled_features = list(feature_container.enabled_features)
+    param_features = list([f for f in all_enabled_features if len(f.input_parameters) > 0])
+    param_features_cnt = len(param_features)
     incr = window_size - overlap
     if incr <= 0:
         raise Exception(
             "FATAL ERROR: Overlap must be smaller than window_size!")
     window_start_pntr = 0
     tot_it = round(
-        min(1, np.ceil(enabled_feature_count / window_size))
-        + max(0, np.ceil((enabled_feature_count - window_size) / incr))
+        min(1, np.ceil(param_features_cnt / window_size))
+        + max(0, np.ceil((param_features_cnt - window_size) / incr))
     )
     it = 1
     incumbent = {}
-    while window_start_pntr < enabled_feature_count:
+    while window_start_pntr < param_features_cnt:
         for f in filter(lambda f: f.enabled, feature_list):
             f.enabled = False
         cur_window = [
             window_start_pntr,
-            min(window_start_pntr + window_size - 1, enabled_feature_count - 1),
+            min(window_start_pntr + window_size - 1, param_features_cnt - 1),
         ]
-        for i, item in enumerate(enabled_features):
-            if cur_window[0] <= i <= cur_window[1] and item in enabled_features:
+        for i, item in enumerate(param_features):
+            if cur_window[0] <= i <= cur_window[1] and item in param_features:
                 item.enabled = True
             else:
                 item.enabled = False
         print()
         print(f"Iteration {it}/{tot_it}")
         print(
-            "|".join("█" if f.enabled else "░" for f in enabled_features)
+            "|".join("█" if f.enabled else "░" for f in param_features)
             + f" -> {', '.join(f.name for f in feature_container.feature_list if f.enabled)}"
         )
         print()

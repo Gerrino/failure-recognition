@@ -44,14 +44,16 @@ class MyProperty:
         """Get the default value of the property depending on the type"""
         if self.type.default_value is not None:
             return self.type.default_value
+        if self.type.values is not None and len(self.type.values) > 0:
+            if self.type.system_type in ["string", "int", "float"]:
+                return self.type.values[0]
         if self.type.system_type == "int":
             return DEFAULT_INT
         if self.type.system_type == "float":
-            return DEFAULT_FLOAT
-        if self.type.system_type == "string":
-            return self.type.range[0]
+            return DEFAULT_FLOAT        
         if self.type.system_type == "array":
             return self.get_values()
+        raise ValueError("Could not find default value")
 
 
     def get_range(self, i: int = None) -> list:
@@ -96,8 +98,7 @@ class MyProperty:
         if cfg != None and self.get_id(sensor) in cfg:
             value = cfg[self.get_id(sensor)]
         else:
-            value = self.get_default_value()
-            print("default value", self.name, value)
+            value = self.get_default_value() 
         return {self.name: value}
 
     def get_hyper_parameter_list(self, sensor) -> list:
