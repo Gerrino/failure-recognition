@@ -21,7 +21,12 @@ class Feature:
     input_parameters: List[MyProperty]
     return_type: str
     coefficients: MyProperty = None
+    is_optimized: bool = True # opt only if len(input_parameters) > 0
     
+
+    def has_params(self) -> bool:
+        """Return True if this feature has more than one input parameters"""
+        return len(self.input_parameters) > 0
 
     @classmethod
     def from_json(cls, json_obj: dict) -> Feature:

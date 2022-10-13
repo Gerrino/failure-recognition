@@ -92,10 +92,10 @@ def load_feature_container(path_feat_list: Union[Path, str], path_random_forest:
     print(
         f"There are {sum(1 for f in feature_container.feature_list if f.enabled)} enabled Features!")
     print("Features with parameters:")
-    print(f"   {', '.join(f.name for f in feature_container.feature_list if f.enabled and len(f.input_parameters) > 0)}")
+    print(f"   {', '.join(f.name for f in feature_container.param_features)}")
     print("Features without parameters:")
     print(
-        f"   clear{', '.join(f.name for f in feature_container.feature_list if f.enabled and len(f.input_parameters) == 0)}"
+        f"   clear{', '.join(f.name for f in feature_container.paramless_features)}"
     )
     print()
     return feature_container
@@ -174,15 +174,12 @@ def smac_tsfresh_optimize(
     sensors = timeseries.columns[2:]
     feature_list = feature_container.feature_list
     date_time_opt_start = datetime.datetime.now()
-    num_opt_feat = sum(
-        1 for f in feature_list if f.enabled and len(f.input_parameters) > 0)
+    num_opt_feat = sum(1 for f in feature_container.param_features)
     name_opt_feat = ", ".join(
-        f.name for f in feature_container.feature_list if f.enabled)
+        f.name for f in feature_container.enabled_features)
     for sensor in sensors:
-        for f in filter(
-            lambda f: f.enabled and len(f.input_parameters) > 0,
-            feature_container.feature_list,
-        ):  # drop existing default values of enabled features
+        for f in feature_container.param_features: 
+            # drop existing default values of enabled features
             drop_name = None
             for col_name in feature_container.feature_state.columns:
                 drop_name = col_name if col_name.startswith(
@@ -272,7 +269,7 @@ def smac_tsfresh_window_opt(
         timeseries, cfg=None, compute_for_all_features=True)  # get default feature matrix
     feature_list = feature_container.feature_list
     all_enabled_features = list(feature_container.enabled_features)
-    param_features = list([f for f in all_enabled_features if len(f.input_parameters) > 0])
+    param_features = list([f for f in feature_container.param_features])
     param_features_cnt = len(param_features)
     incr = window_size - overlap
     if incr <= 0:

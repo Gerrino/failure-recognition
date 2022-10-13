@@ -53,7 +53,27 @@ class FeatureContainer:
         """Get all enabled features"""
         return [f for f in self.feature_list if f.enabled]
 
-    def column_update(self, new_sensor_state: pd.DataFrame, drop_param_col: bool = True):
+    @property
+    def paramless_features(self) -> List[Feature]:
+        """Get all enabled features without(!) parameters"""
+        return [f for f in self.enabled_features if len(f.input_parameters) == 0]
+
+    @property
+    def param_features(self) -> List[Feature]:
+        """Get all enabled features with parameters"""
+        return [f for f in self.enabled_features if len(f.input_parameters) > 0]
+    
+    @property
+    def opt_features(self) -> List[Feature]:
+        """Get all enabled features with parameters that are being optimized"""
+        return [f for f in self.feature_list if f.enabled and len(f.input_parameters) > 0 and f.is_optimized]
+    
+    @property
+    def no_opt_features(self) -> List[Feature]:
+        """Get all enabled features that are not being optimized"""
+        return [f for f in self.feature_list if f.enabled and len(f.input_parameters) == 0 or not f.is_optimized]
+
+    def column_update(self, new_sensor_state: pd.DataFrame, drop_opt_col: bool = True):
         """
         Add columns from newDFState that do not exist in feature_state to feature_state.
         updates columns from newDFState if they do exist in feature_state.
@@ -62,8 +82,8 @@ class FeatureContainer:
         ---
         new_sensor_state:
             Data frame with feature columns
-        drop_param_col:
-            Drop columns belonging to features with parameters to make place for updated columns
+        drop_opt_col:
+            Drop columns belonging to features with parameters that are being optimized
         """
         if len(new_sensor_state) == 0:
             return
@@ -74,9 +94,8 @@ class FeatureContainer:
         old_cols_cnt = len(self.feature_state.columns)        
         self.logger.info(f"old columns \n {self.feature_state.columns.values}")
         self.logger.info(f"new columns \n {new_sensor_state.columns.values}")
-        if drop_param_col:
-            parameter_feat = [f for f in self.feature_list if len(f.input_parameters) > 0]   
-            parameter_columns = [c for c in self.feature_state.columns for f in parameter_feat if f"__{f.name}" in c]
+        if drop_opt_col:             
+            parameter_columns = [c for c in self.feature_state.columns for f in self.opt_features if f"__{f.name}" in c]
             self.feature_state = self.feature_state.drop(parameter_columns, axis=1)
         
         for overwrite_col in [c for c in new_sensor_state.columns if c in self.feature_state.columns]:
@@ -121,11 +140,12 @@ class FeatureContainer:
         cfg: dict
             difeature param / value dictionary. If None, use default values
         compute_for_all_features: bool
-            If true, compute the feature state for all features (including parameterless features)
+            If true, compute the feature state for all features (including non-opt features)
 
         """
         sensors = timeseries.columns[2:]
 
+        # get the sensor-feature dictionary for all features to extract
         kind_to_fc_parameters = self.get_feature_dictionary(sensors, cfg,  compute_for_all_features, True)    
         #print("kind_to_fc_parameters", kind_to_fc_parameters)                   
 
@@ -136,15 +156,15 @@ class FeatureContainer:
             X = impute(x)
             self.column_update(X)
 
-    def get_feature_dictionary(self, sensors: list, cfg: dict, param_less: bool, with_param: bool) -> dict:
+    def get_feature_dictionary(self, sensors: list, cfg: dict, non_opt: bool, opt: bool) -> dict:
         """
         This method returns a dictionary providing information of all features per sensor and their hyperparameters
         (including the incumbent hyperparameter values).
 
         Parameters
         ---
-        param_less: get feature dict for parameterless features
-        with_param: get feature dict for all features with at least one hyperparameter          
+        non_opt: get feature dict for parameterless features
+        opt: get feature dict for all features with at least one hyperparameter          
         
         Returns
         ---
@@ -153,11 +173,12 @@ class FeatureContainer:
                 "input_var_0": designated_value
         ...
         """        
-        param_less_features, param_features = [], []
-        if param_less:
-            param_less_features = [f for f in self.enabled_features if len(f.input_parameters) == 0]
-        if with_param:
-            param_features = [f for f in self.enabled_features if len(f.input_parameters) > 0]
+        paramless_features, param_features = [], []
+        if non_opt:
+            paramless_features = [f for f in self.no_opt_features if not f.has_params()]
+            param_features = [f for f in self.no_opt_features if f.has_params()]
+        if opt:
+            param_features += self.opt_features
 
         def merge_with_coeffi(feat: Feature, params: Union[dict, None]) -> List[Dict]:
             """Return a list of param dicts for all coefficients"""
@@ -179,11 +200,11 @@ class FeatureContainer:
 
         feature_dict = {}
         for sensor in sensors:
-            feature_dict[sensor] = {}          
+            feature_dict[sensor] = {}
 
-            for feat in param_less_features:
-                feature_dict[sensor][feat.name] = merge_with_coeffi(feat, None)
-  
+            for feat in paramless_features:               
+                feature_dict[sensor][feat.name] = merge_with_coeffi(feat, None)           
+
             for feat in param_features:
                 param_dict = feat.get_parameter_dict(cfg, sensor)
                 feature_dict[sensor][feat.name] = merge_with_coeffi(feat, param_dict)
