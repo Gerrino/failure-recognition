@@ -101,10 +101,20 @@ class MyProperty:
             value = self.get_default_value() 
         return {self.name: value}
 
-    def get_hyper_parameter_list(self, sensor) -> list:
+    def get_hyper_parameter_list(self, sensor: str, cfg: dict) -> list:
+        """Get a list of hyper parameters for the property depending on the system type. The cfg is used
+        for obtaining the default values (necessary for overlapping opt. windows).
+        If the values property is set then a Categorical hyperparameter is used. If the range
+        property is set then a Uniform[Integer/Float]Hyperparameter is generated. 
+
+        For a system_type 'dictionary' return the hyperparameters for each property (repr. dict keys) in the
+        property_list.
+        """
+
         import ConfigSpace.hyperparameters as smac_params
 
-        default_val = self.get_default_value()
+        default_val = cfg.get(self.get_id(sensor), self.get_default_value())
+        print("get_hyper_parameter_list", default_val, cfg.get(self.get_id(sensor)))
 
         if self.type.system_type in ["int", "float", "string"]:
             if isinstance(self.type.values, list) and len(self.type.values) > 0:    #categorical

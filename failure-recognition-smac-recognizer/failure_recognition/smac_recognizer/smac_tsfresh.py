@@ -42,7 +42,7 @@ def hyperparameter_from_type(name: str, type: MyType, default_value) -> ConfigSp
         message="hyperparameter_from_type: unknown system type " + type.system_type)
 
 
-def register_decision_tree_hyperparams(cs, type_parameters: List[MyProperty], incumbent: dict = None):
+def generate_decision_tree_hyperparams(cs, type_parameters: List[MyProperty], incumbent: dict):
     """Create and add hyperparameters for every given type to the cs.
      Their default values are either in incumbent or saved in the type object
     """
@@ -51,7 +51,16 @@ def register_decision_tree_hyperparams(cs, type_parameters: List[MyProperty], in
         p.type, incumbent.get(p.name)) for p in type_parameters]
 
     cs.add_hyperparameters(hyper_parameters)
-    print("register_decision_tree_hyperparams", str(cs))
+    print("generate_decision_tree_hyperparams", str(cs))
+
+def generate_feature_hyperparams(feature_container: FeatureContainer, cs, sensors, incumbent: dict):
+    """Create and register the hyperparameters in the given configuration state for very sensor
+    """
+    for sensor in sensors:
+        for i in [i for f in feature_container.enabled_features for i in f.input_parameters]:
+            hyp = i.get_hyper_parameter_list(sensor, incumbent)
+            print(f"Added Hyper Parameter: {hyp}")
+            cs.add_hyperparameters(hyp)
 
 
 def create_smac(
@@ -111,30 +120,19 @@ def register_logger():
     return logger
 
 
-def register_hyperparameters(feature_container, cs, sensors):
-    """Register the hyperparameters in the given configuration state for very sensor
-    """
-    for sensor in sensors:
-        for f in filter(lambda f: f.enabled, feature_container.feature_list):
-            for i in f.input_parameters:
-                hyp = i.get_hyper_parameter_list(sensor)
-                print(f"Added Hyper Parameter: {hyp}")
-                cs.add_hyperparameters(hyp)
-
-
-def create_configuration_space(feature_container, sensors) -> ConfigurationSpace:
+def create_configuration_space(feature_container: FeatureContainer, sensors: list) -> ConfigurationSpace:
     """Create a smac configuration space object using the incumbent state, the
     window parameters and random forest parameters
     """
     cs = ConfigurationSpace()
-    register_decision_tree_hyperparams(
+    generate_decision_tree_hyperparams(
         cs, feature_container.random_forest_params, feature_container.incumbent)
     window_size_percent = UniformIntegerHyperparameter(
         "window_size_percent", 10, 100, default_value=50)
     window_offset_percent = UniformIntegerHyperparameter(
         "window_offset_percent", 0, 90, default_value=0)
     cs.add_hyperparameters([window_size_percent, window_offset_percent])
-    register_hyperparameters(feature_container, cs, sensors)
+    generate_feature_hyperparams(feature_container, cs, sensors, feature_container.incumbent)
     return cs
 
 
