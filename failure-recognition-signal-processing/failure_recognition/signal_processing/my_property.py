@@ -114,7 +114,7 @@ class MyProperty:
         import ConfigSpace.hyperparameters as smac_params
 
         default_val = cfg.get(self.get_id(sensor), self.get_default_value())
-        print("get_hyper_parameter_list", default_val, cfg.get(self.get_id(sensor)))
+        # print("get_hyper_parameter_list", default_val, cfg.get(self.get_id(sensor)))
 
         if self.type.system_type in ["int", "float", "string"]:
             if isinstance(self.type.values, list) and len(self.type.values) > 0:    #categorical

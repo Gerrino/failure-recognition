@@ -1,0 +1,679 @@
+-   enabled: true
+    name: find_peaks_feature
+    coefficients:
+        name: coeff
+        type:
+            range:
+            - 0
+            - 10
+            system_type: int
+    input_parameters:
+    -   name: num_peaks
+        type:
+            range:
+            - 5
+            - 20
+            system_type: int
+            default_value: 5
+    -   name: f_min
+        type:
+            range:
+            - 0
+            - 50
+            system_type: float
+            default_value: 0
+    -   name: ts
+        type:
+            range:
+            - 0.01
+            - 1.0
+            system_type: float
+            default_value: 0.001
+    -   name: max_iterations
+        type:
+            values:
+            - 5
+            system_type: int
+            default_value: 10
+    -   name: mode
+        type:
+            values:
+            - distance
+            - threshold
+            - prominence
+            system_type: string
+            default_value: distance
+    -   name: x_0
+        type:
+            property_list:
+            -   name: distance
+                type:
+                    system_type: float
+                    range:
+                    - 1.0
+                    - 100
+                    default_value: 1.5
+            -   name: threshold
+                type:
+                    system_type: float
+                    range:
+                    - 0.001
+                    - 100
+                    default_value: 0.001
+            -   name: prominence
+                type:
+                    system_type: float
+                    range:
+                    - 0.0
+                    - 100
+                    default_value: 0.001
+            system_type: dictionary
+    return_type: pandas.Series
+-   enabled: true
+    name: abs_energy
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: absolute_maximum
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: absolute_sum_of_changes
+    input_parameters: []
+    return_type: float
+-   enabled: true
+    name: agg_autocorrelation
+    input_parameters:
+    -   name: f_agg
+        type:
+            values:
+            - mean
+            - var
+            - std
+            - median
+            system_type: string
+    -   name: maxlag
+        type:
+            default_value: 5
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: float
+-   enabled: false
+    name: agg_linear_trend
+    input_parameters:
+    -   name: attr
+        type:
+            values:
+            - pvalue
+            - rvalue
+            - intercept
+            - slope
+            - stderr
+            system_type: string
+    -   name: chunk_len
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    -   name: f_agg
+        type:
+            values:
+            - max
+            - min
+            - mean
+            - median
+            system_type: string
+    return_type: pandas.Series
+-   enabled: false
+    name: approximate_entropy
+    input_parameters:
+    -   name: m
+        type:
+            range:
+            - 0
+            - 5
+            system_type: int
+    -   name: r
+        type:
+            range:
+            - 0.1
+            - 1.0
+            system_type: float
+    return_type: float
+-   enabled: true
+    name: ar_coefficient
+    coefficients:
+        name: coeff
+        type:
+            range:
+            - 0
+            - 1
+            system_type: int
+    input_parameters:
+    -   name: k
+        type:
+            values:
+            - 5
+            system_type: int
+    return_type: pandas.Series
+-   enabled: false
+    name: augmented_dickey_fuller
+    input_parameters:
+    -   name: attr
+        type:
+            values:
+            - teststat
+            - pvalue
+            - usedlag
+            system_type: string
+    -   name: autolag
+        type:
+            values:
+            - AIC
+            - BIC
+            - t-stats
+            system_type: string
+    return_type: float
+-   enabled: true
+    name: autocorrelation
+    input_parameters:
+    -   name: lag
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: float
+-   enabled: false
+    name: benford_correlation
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: binned_entropy
+    input_parameters:
+    -   name: max_bins
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: float
+-   enabled: false
+    name: c3
+    input_parameters:
+    -   name: lag
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: float
+-   enabled: false
+    name: change_quantiles
+    input_parameters:
+    -   name: ql
+        type:
+            default_value: 0.23
+            range:
+            - 0.0
+            - 0.49
+            system_type: float
+    -   name: qh
+        type:
+            default_value: 0.75
+            range:
+            - 0.5
+            - 1.0
+            system_type: float
+    -   name: isabs
+        type:
+            system_type: bool
+    -   name: f_agg
+        type:
+            values:
+            - mean
+            - std
+            - var
+            - median
+            system_type: string
+    return_type: float
+-   enabled: false
+    name: cid_ce
+    input_parameters:
+    -   name: normalize
+        type:
+            system_type: bool
+    return_type: float
+-   enabled: false
+    name: count_above
+    input_parameters:
+    -   name: t
+        type:
+            range:
+            - 0.0
+            - 0.0
+            system_type: float
+    return_type: float
+-   enabled: false
+    name: count_above_mean
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: count_below
+    input_parameters:
+    -   name: t
+        type:
+            range:
+            - 0.0
+            - 0.0
+            system_type: float
+    return_type: float
+-   enabled: false
+    name: count_below_mean
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: cwt_coefficients
+    coefficients:
+        name: coeff
+        type:
+            values:
+            - 0
+            - 1
+            system_type: int
+    input_parameters:
+    -   name: widths
+        type:
+            system_type: array
+            values:
+            - 50
+            - 60
+            - 70
+    -   name: w
+        type:
+            values:
+            - 50
+            - 60
+            - 70
+            system_type: int
+    return_type: pandas.Series
+-   enabled: false
+    name: energy_ratio_by_chunks
+    input_parameters: []
+    return_type: list
+-   enabled: false
+    name: fft_aggregated
+    input_parameters:
+    -   name: aggtype
+        type:
+            values:
+            - centroid
+            - variance
+            - skew
+            - kurtosis
+            system_type: string
+    return_type: pandas.Series
+-   enabled: false
+    name: fft_coefficient
+    input_parameters:
+    -   name: coeff
+        type:
+            range:
+            - 0
+            - 2147483647
+            system_type: int
+    -   name: attr
+        type:
+            values:
+            - real
+            - imag
+            - abs
+            - angle
+            - real
+            - imag), the absolute value (attr=
+            - abs) and the angle in degrees (attr==
+            system_type: string
+    return_type: pandas.Series
+-   enabled: false
+    name: first_location_of_maximum
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: first_location_of_minimum
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: fourier_entropy
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: friedrich_coefficients
+    input_parameters:
+    -   name: m
+        type:
+            range:
+            - 0
+            - 2147483647
+            system_type: int
+    -   name: r
+        type:
+            range:
+            - 0.0
+            - 3.40282347e+38
+            system_type: float
+    -   name: coeff
+        type:
+            range:
+            - 0.0
+            - 3.40282347e+38
+            system_type: float
+    return_type: pandas.Series
+-   enabled: false
+    name: has_duplicate
+    input_parameters: []
+    return_type: bool
+-   enabled: false
+    name: has_duplicate_max
+    input_parameters: []
+    return_type: bool
+-   enabled: false
+    name: has_duplicate_min
+    input_parameters: []
+    return_type: bool
+-   enabled: false
+    name: index_mass_quantile
+    input_parameters:
+    -   name: q
+        type:
+            range:
+            - 0.0
+            - 0.0
+            system_type: float
+    return_type: pandas.Series
+-   enabled: false
+    name: kurtosis
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: large_standard_deviation
+    input_parameters:
+    -   name: r
+        type:
+            range:
+            - 0.0
+            - 1.0
+            system_type: float
+    return_type: bool
+-   enabled: false
+    name: last_location_of_maximum
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: last_location_of_minimum
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: lempel_ziv_complexity
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: length
+    input_parameters: []
+    return_type: int
+-   enabled: false
+    name: linear_trend
+    input_parameters:
+    -   name: attr
+        type:
+            values: []
+            system_type: string
+    return_type: pandas.Series
+-   enabled: false
+    name: linear_trend_timewise
+    input_parameters:
+    -   name: attr
+        type:
+            values: []
+            system_type: string
+    return_type: list
+-   enabled: false
+    name: longest_strike_above_mean
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: longest_strike_below_mean
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: max_langevin_fixed_point
+    input_parameters:
+    -   name: m
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    -   name: r
+        type:
+            range:
+            - 0.0
+            - 0.0
+            system_type: float
+    return_type: float
+-   enabled: false
+    name: maximum
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: mean
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: mean_abs_change
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: mean_change
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: mean_n_absolute_max
+    input_parameters:
+    -   name: number_of_maxima
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: float
+-   enabled: false
+    name: mean_second_derivative_central
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: median
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: minimum
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: number_crossing_m
+    input_parameters:
+    -   name: m
+        type:
+            range:
+            - 0.0
+            - 0.0
+            system_type: float
+    return_type: int
+-   enabled: false
+    name: number_cwt_peaks
+    input_parameters:
+    -   name: n
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: int
+-   enabled: false
+    name: number_peaks
+    input_parameters:
+    -   name: n
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: float
+-   enabled: false
+    name: partial_autocorrelation
+    input_parameters:
+    -   name: lag
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: float
+-   enabled: false
+    name: percentage_of_reoccurring_datapoints_to_all_datapoints
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: percentage_of_reoccurring_values_to_all_values
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: permutation_entropy
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: quantile
+    input_parameters:
+    -   name: q
+        type:
+            range:
+            - 0.0
+            - 0.0
+            system_type: float
+    return_type: float
+-   enabled: false
+    name: range_count
+    input_parameters:
+    -   name: min
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    -   name: max
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: int
+-   enabled: false
+    name: ratio_beyond_r_sigma
+    input_parameters:
+    -   name: r
+        type:
+            range:
+            - 0.0
+            - 0.0
+            system_type: float
+    return_type: float
+-   enabled: false
+    name: ratio_value_number_to_time_series_length
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: root_mean_square
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: sample_entropy
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: set_property
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: skewness
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: spkt_welch_density
+    input_parameters:
+    -   name: coeff
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: pandas.Series
+-   enabled: false
+    name: standard_deviation
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: sum_of_reoccurring_data_points
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: sum_of_reoccurring_values
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: sum_values
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: symmetry_looking
+    input_parameters:
+    -   name: r
+        type:
+            range:
+            - 0.0
+            - 1.0
+            system_type: float
+    return_type: bool
+-   enabled: false
+    name: time_reversal_asymmetry_statistic
+    input_parameters:
+    -   name: lag
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: float
+-   enabled: false
+    name: value_count
+    input_parameters:
+    -   name: value
+        type:
+            range:
+            - 0
+            - 0
+            system_type: int
+    return_type: int
+-   enabled: false
+    name: variance
+    input_parameters: []
+    return_type: float
+-   enabled: false
+    name: variance_larger_than_standard_deviation
+    input_parameters: []
+    return_type: bool
+-   enabled: false
+    name: variation_coefficient
+    input_parameters: []
+    return_type: float

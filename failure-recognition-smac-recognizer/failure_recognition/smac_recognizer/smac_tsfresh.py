@@ -57,10 +57,11 @@ def generate_feature_hyperparams(feature_container: FeatureContainer, cs, sensor
     """Create and register the hyperparameters in the given configuration state for very sensor
     """
     for sensor in sensors:
-        for i in [i for f in feature_container.enabled_features for i in f.input_parameters]:
+        for i in [i for f in feature_container.opt_features for i in f.input_parameters]:
             hyp = i.get_hyper_parameter_list(sensor, incumbent)
             print(f"Added Hyper Parameter: {hyp}")
             cs.add_hyperparameters(hyp)
+    pass
 
 
 def create_smac(
@@ -172,19 +173,10 @@ def smac_tsfresh_optimize(
     sensors = timeseries.columns[2:]
     feature_list = feature_container.feature_list
     date_time_opt_start = datetime.datetime.now()
-    num_opt_feat = sum(1 for f in feature_container.param_features)
+    num_opt_feat = sum(1 for f in feature_container.opt_features)
     name_opt_feat = ", ".join(
-        f.name for f in feature_container.enabled_features)
-    for sensor in sensors:
-        for f in feature_container.param_features: 
-            # drop existing default values of enabled features
-            drop_name = None
-            for col_name in feature_container.feature_state.columns:
-                drop_name = col_name if col_name.startswith(
-                    f"{sensor}__{f.name}__") else drop_name
-            if drop_name is not None:
-                feature_container.feature_state = feature_container.feature_state.drop(
-                    drop_name, axis=1)
+        f.name for f in feature_container.opt_features)
+
     cs = create_configuration_space(feature_container, sensors)
     smac = create_smac(
         cs,
@@ -204,7 +196,7 @@ def smac_tsfresh_optimize(
         incumbent = smac.solver.incumbent
     inc_value = smac.get_tae_runner().run(incumbent, 1)[1]
     feature_container.incumbent = incumbent
-    print("Optimized Value: %.2f" % inc_value)
+    print("Optimized Value: %.3f" % inc_value)
     new_history_row = pd.DataFrame(
         {
             "datetime": [datetime.datetime.now()],
@@ -265,10 +257,9 @@ def smac_tsfresh_window_opt(
     print("Compute feature state for parameterless features")
     feature_container.compute_feature_state(
         timeseries, cfg=None, compute_for_all_features=True)  # get default feature matrix
-    feature_list = feature_container.feature_list
-    all_enabled_features = list(feature_container.enabled_features)
-    param_features = list([f for f in feature_container.param_features])
-    param_features_cnt = len(param_features)
+
+    opt_features = list([f for f in feature_container.opt_features])
+    param_features_cnt = len(opt_features)
     incr = window_size - overlap
     if incr <= 0:
         raise Exception(
@@ -280,23 +271,19 @@ def smac_tsfresh_window_opt(
     )
     it = 1
     incumbent = {}
-    while window_start_pntr < param_features_cnt:
-        for f in filter(lambda f: f.enabled, feature_list):
-            f.enabled = False
+    while window_start_pntr - incr + window_size < param_features_cnt:
         cur_window = [
             window_start_pntr,
             min(window_start_pntr + window_size - 1, param_features_cnt - 1),
         ]
-        for i, item in enumerate(param_features):
-            if cur_window[0] <= i <= cur_window[1] and item in param_features:
-                item.enabled = True
-            else:
-                item.enabled = False
+        for i, item in enumerate(opt_features):
+            item.optimize = cur_window[0] <= i <= cur_window[1] and item in opt_features
+
         print()
         print(f"Iteration {it}/{tot_it}")
         print(
-            "|".join("█" if f.enabled else "░" for f in param_features)
-            + f" -> {', '.join(f.name for f in feature_container.feature_list if f.enabled)}"
+            "|".join("█" if f.is_optimized() else "░" for f in opt_features)
+            + f" -> {', '.join(f.name for f in feature_container.opt_features)}"
         )
         print()
         window_start_pntr += incr
@@ -312,6 +299,5 @@ def smac_tsfresh_window_opt(
                 window_size_ratio,
             )
         )
-    for f in all_enabled_features:
-        f.enabled = True
+
     return incumbent, feature_container

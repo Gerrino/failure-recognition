@@ -21,8 +21,13 @@ class Feature:
     input_parameters: List[MyProperty]
     return_type: str
     coefficients: MyProperty = None
-    is_optimized: bool = True # opt only if len(input_parameters) > 0
+    optimize: bool = True # opt only if len(input_parameters) > 0
     
+
+    def is_optimized(self) -> bool:
+        """Return if the feature is optimized
+        """
+        return self.has_params() and self.optimize
 
     def has_params(self) -> bool:
         """Return True if this feature has more than one input parameters"""

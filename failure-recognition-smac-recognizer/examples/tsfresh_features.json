@@ -2,16 +2,38 @@
   {
     "enabled": false,
     "name": "find_peaks_feature",
+    "coefficients":
+    {
+      "name": "coeff",
+        "type": {
+          "range": [
+            0,
+            10
+          ],
+          "system_type": "int"
+        }
+    },
     "input_parameters": [
       {
         "name": "num_peaks",
         "type": {
           "range": [
-            1,
+            5,
             20
           ],
           "system_type": "int",
           "default_value": 5
+        }
+      },
+      {
+        "name": "f_min",
+        "type": {
+          "range": [
+            0,
+            50
+          ],         
+          "system_type": "float",
+          "default_value": 0
         }
       },
       {
@@ -22,7 +44,17 @@
             1.00
           ],
           "system_type": "float",
-          "default_value": 0.01
+          "default_value": 0.001
+        }
+      },
+      {
+        "name": "max_iterations",
+        "type": {
+          "values": [
+            5
+          ],
+          "system_type": "int",
+          "default_value": 10
         }
       },
       {
@@ -57,10 +89,10 @@
               "type": {
                 "system_type": "float",
                 "range": [
-                  0.0,
+                  0.001,
                   100
                 ],
-                "default_value": 1
+                "default_value": 0.001
               }
             },
             {
@@ -71,7 +103,7 @@
                   0.0,
                   100
                 ],
-                "default_value": 0.01
+                "default_value": 0.001
               }
             }
           ],
@@ -201,23 +233,23 @@
   {
     "enabled": true,
     "name": "ar_coefficient",
-    "input_parameters": [
-      {
-        "name": "coeff",
+    "coefficients":
+    {
+      "name": "coeff",
         "type": {
           "range": [
             0,
-            0
+            1
           ],
           "system_type": "int"
         }
-      },
+    },
+    "input_parameters": [      
       {
         "name": "k",
         "type": {
-          "range": [
-            0,
-            0
+          "values": [
+            5
           ],
           "system_type": "int"
         }
@@ -226,7 +258,7 @@
     "return_type": "pandas.Series"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "augmented_dickey_fuller",
     "input_parameters": [
       {
@@ -372,7 +404,7 @@
     "return_type": "float"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "count_above",
     "input_parameters": [
       {
@@ -420,31 +452,37 @@
   {
     "enabled": false,
     "name": "cwt_coefficients",
+    "coefficients":
+    {
+      "name": "coeff",
+        "type": {
+          "values": [
+            0,
+            1            
+          ],
+          "system_type": "int"
+        }
+    },
     "input_parameters": [
       {
         "name": "widths",
         "type": {
-          "element_type": "int",
-          "array_of_my_type": null,
-          "system_type": null
-        }
-      },
-      {
-        "name": "coeff",
-        "type": {
-          "range": [
-            0,
-            0
-          ],
-          "system_type": "int"
-        }
-      },
+          "system_type": "array",
+          "values":
+          [
+            50,
+            60,
+            70
+          ]
+        }        
+      },      
       {
         "name": "w",
         "type": {
-          "range": [
-            0,
-            0
+          "values": [
+            50,
+            60,
+            70
           ],
           "system_type": "int"
         }
@@ -459,11 +497,11 @@
     "return_type": "list"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "fft_aggregated",
-    "input_parameters": [
-      {
-        "name": "aggtype",
+    "coefficients":
+    {
+      "name": "aggtype",
         "type": {
           "values": [
             "centroid",
@@ -473,7 +511,8 @@
           ],
           "system_type": "string"
         }
-      }
+    },
+    "input_parameters": [      
     ],
     "return_type": "pandas.Series"
   },
@@ -720,7 +759,7 @@
     "return_type": "float"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "mean",
     "input_parameters": [],
     "return_type": "float"

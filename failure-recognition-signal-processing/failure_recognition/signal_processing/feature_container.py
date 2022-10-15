@@ -56,22 +56,22 @@ class FeatureContainer:
     @property
     def paramless_features(self) -> List[Feature]:
         """Get all enabled features without(!) parameters"""
-        return [f for f in self.enabled_features if len(f.input_parameters) == 0]
+        return [f for f in self.enabled_features if not f.has_params()]
 
     @property
     def param_features(self) -> List[Feature]:
         """Get all enabled features with parameters"""
-        return [f for f in self.enabled_features if len(f.input_parameters) > 0]
+        return [f for f in self.enabled_features if f.has_params()]
     
     @property
     def opt_features(self) -> List[Feature]:
         """Get all enabled features with parameters that are being optimized"""
-        return [f for f in self.feature_list if f.enabled and len(f.input_parameters) > 0 and f.is_optimized]
+        return [f for f in self.feature_list if f.enabled and f.is_optimized()]
     
     @property
     def no_opt_features(self) -> List[Feature]:
         """Get all enabled features that are not being optimized"""
-        return [f for f in self.feature_list if f.enabled and len(f.input_parameters) == 0 or not f.is_optimized]
+        return [f for f in self.feature_list if f.enabled and not f.is_optimized()]
 
     def column_update(self, new_sensor_state: pd.DataFrame, drop_opt_col: bool = True):
         """
@@ -102,8 +102,8 @@ class FeatureContainer:
             del self.feature_state[overwrite_col]
         self.feature_state = pd.concat([self.feature_state, new_sensor_state], axis=1)
 
-        self.logger.info(f"result columns {self.feature_state.columns.values}")
-        self.logger.info(f"Column update: {old_cols_cnt} => {len(self.feature_state.columns.values)}")
+        self.logger.info(f"result columns \n{self.feature_state.columns.values}")
+        self.logger.info(f"Column update\n {old_cols_cnt} => {len(self.feature_state.columns.values)}")
 
     def load(self, tsfresh_features: Union[Path, str], random_forest_parameters: Union[Path, str]):
         """Load features/rf params from file"""

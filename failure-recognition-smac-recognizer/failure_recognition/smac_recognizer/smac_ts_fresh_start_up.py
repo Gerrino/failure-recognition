@@ -6,9 +6,9 @@ import numpy as np
 import failure_recognition.signal_processing.random_forest_from_cfg as random_forest_from_cfg
 from smac.scenario.scenario import Scenario
 from failure_recognition.smac_recognizer import PATH_DICT, SCENARIO_DICT, SMAC_SEED
-
+import yaml
 import smac_tsfresh
-
+import json
 
 
 plt.close("all")
@@ -25,7 +25,7 @@ test_settings.index += 1
     PATH_DICT,
     SCENARIO_DICT,
     window_size=2,
-    overlap=0,
+    overlap=1,
     seed=np.random.RandomState(SMAC_SEED),
     window_size_ratio=0.2,
 )
