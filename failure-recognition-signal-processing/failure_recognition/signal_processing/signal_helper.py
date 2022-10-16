@@ -4,7 +4,10 @@ Created on Wed Jun 22 10:25:29 2022
 @author: Noske
 """
 
+import ast
 from cgi import parse_multipart
+from functools import lru_cache
+from itertools import count
 from typing import Dict, Union
 from enum import Enum
 import math
@@ -135,38 +138,60 @@ def __find_peaks_feature(x, param: Dict[str, str]):
     ts = param["ts"]
     num_peaks = param["num_peaks"]
     xf, yyf = get_fft(ts, x, param["f_min"])
+    all_peaks_x = []
     all_peaks_y = []
     chunk_size = len(xf) // num_peaks
+    if chunk_size == 0:
+        raise ValueError("invalid chunksize chunksize", chunk_size,"len(xf)", len(xf), "param", param)
     for i in range(len(xf) // chunk_size):
         part_xf, part_yyf = xf[i*chunk_size:(i+1)*chunk_size], yyf[i*chunk_size:(i+1)*chunk_size]
         peak_x, peak_y = find_signal_peaks(part_xf, part_yyf, num_peaks=sub_peaks, mode=mode, x_0=dict(
             param["x_0"]), max_iterations=param["max_iterations"])
         peak_x, peak_y = 0 if len(peak_x) == 0 else peak_x[0], 0 if len(peak_y) == 0 else peak_y[0]
         peak_x, peak_y = peak_x / np.median(xf), peak_y / np.median(yyf)
-        all_peaks_y.append(peak_y)   
+        all_peaks_y.append(peak_y)
+        all_peaks_x.append(peak_x)
+    #print("all_peaks_y", all_peaks_y)
     return all_peaks_y
 
 
 @set_property("fctype", "combiner")
-def find_peaks_feature(x, param):
+def find_peaks_feature(x, param: list):
     """
-    Function to calculate a feature vector from fft peaks and combine it with tsfresh parameters 
+    Function to calculate a feature vector from fft peaks and combine it with tsfresh parameters
+
 
     :param x: the time series to calculate the feature of
     :type x: pandas.Series
-    :param c: the time series name
-    :type c: str
     :param param: contains dictionaries {"p1": x, "p2": y, ...} with p1 float, p2 int ...
     :type param: list
     :return: list of tuples (s, f) where s are the parameters, serialized as a string,
             and f the respective feature value as bool, int or float
     :return type: pandas.Series
     """
-    # return [(convert_to_output_format(config), __find_peaks_feature(x, config)) for config in param]
-    peaks_x_y = __find_peaks_feature(x, param[0])
-    result = [(convert_to_output_format(param[0].update(
-        {"coeff": i}) or param[0]), peak) for i, peak in enumerate(peaks_x_y)]
-    return result
+    distinct_params_coeff: Dict[str, list] = {}
+    param.sort(key=lambda x: int(x["coeff"]))
+    for p in param:
+        tmp = dict(p)
+        coeff = int(tmp.pop("coeff"))
+        if coeff >= tmp["num_peaks"]:
+            continue
+        distinct_params_coeff.setdefault(str(tmp), [])
+        distinct_params_coeff[str(tmp)].append(coeff)
+    if len(distinct_params_coeff) > 1:
+        print("find_peaks: found multiple distinct params:", distinct_params_coeff)
+    param_peaks_coeffis = [(ast.literal_eval(p), __find_peaks_feature(x, ast.literal_eval(p)), cs) for p, cs in distinct_params_coeff.items()]
+   
+    if (zero_peaks_cnt := sum(1 for (p, pks, cs) in param_peaks_coeffis for c in cs if c >= len(pks))) > 0:
+        print(f"Peaks index out of bounds. Filling with {zero_peaks_cnt} zeros!")
+    param_peaks_coeffis = [(p, pks + [0]*(len(cs)-len(pks)), cs) for (p, pks, cs) in param_peaks_coeffis]
+
+    output_list = [(convert_to_output_format(p.update({"coeff": c}) or p), pks[c]) for (p, pks, cs) in param_peaks_coeffis for c in cs]
+
+    #print("output_list", output_list)
+
+    return output_list
+
 
 
 def get_fft(

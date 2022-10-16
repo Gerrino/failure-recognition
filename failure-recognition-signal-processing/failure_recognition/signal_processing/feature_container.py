@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 import json
 import logging
 from pathlib import Path
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, Set, Union
 
 from failure_recognition.signal_processing import PATH_DICT
 from failure_recognition.signal_processing.feature import Feature
@@ -31,6 +31,7 @@ class FeatureContainer:
     history: pd.DataFrame = field(default_factory=pd.DataFrame)
     random_forest_params: List[MyProperty] = field(default_factory=list)
     custom_features: Dict[str, Callable] = field(default_factory=dict)
+    new_columns: Set[MyProperty] = field(default_factory=set)
 
     def __post_init__(self):
         if self.logger is None:
@@ -91,19 +92,19 @@ class FeatureContainer:
             self.feature_state = {}
             self.feature_state = new_sensor_state
             return
-        old_cols_cnt = len(self.feature_state.columns)        
-        self.logger.info(f"old columns \n {self.feature_state.columns.values}")
-        self.logger.info(f"new columns \n {new_sensor_state.columns.values}")
+        #old_cols_cnt = len(self.feature_state.columns)
+        #self.logger.info(f"old columns \n {self.feature_state.columns.values}")
+        #self.logger.info(f"new columns \n {new_sensor_state.columns.values}")
         if drop_opt_col:             
             parameter_columns = [c for c in self.feature_state.columns for f in self.opt_features if f"__{f.name}" in c]
             self.feature_state = self.feature_state.drop(parameter_columns, axis=1)
-        
+        self.new_columns = self.new_columns.union(list(new_sensor_state.columns))
         for overwrite_col in [c for c in new_sensor_state.columns if c in self.feature_state.columns]:
             del self.feature_state[overwrite_col]
         self.feature_state = pd.concat([self.feature_state, new_sensor_state], axis=1)
 
-        self.logger.info(f"result columns \n{self.feature_state.columns.values}")
-        self.logger.info(f"Column update\n {old_cols_cnt} => {len(self.feature_state.columns.values)}")
+        #self.logger.info(f"result columns \n{self.feature_state.columns.values}")
+        #self.logger.info(f"Column update\n {old_cols_cnt} => {len(self.feature_state.columns.values)}")
 
     def load(self, tsfresh_features: Union[Path, str], random_forest_parameters: Union[Path, str]):
         """Load features/rf params from file"""

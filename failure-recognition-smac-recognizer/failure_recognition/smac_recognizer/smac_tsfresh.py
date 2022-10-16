@@ -176,7 +176,7 @@ def smac_tsfresh_optimize(
     num_opt_feat = sum(1 for f in feature_container.opt_features)
     name_opt_feat = ", ".join(
         f.name for f in feature_container.opt_features)
-
+    feature_container.new_columns.clear()
     cs = create_configuration_space(feature_container, sensors)
     smac = create_smac(
         cs,
@@ -194,6 +194,7 @@ def smac_tsfresh_optimize(
         incumbent = smac.optimize()
     finally:
         incumbent = smac.solver.incumbent
+    print("Added colums", feature_container.new_columns)
     inc_value = smac.get_tae_runner().run(incumbent, 1)[1]
     feature_container.incumbent = incumbent
     print("Optimized Value: %.3f" % inc_value)

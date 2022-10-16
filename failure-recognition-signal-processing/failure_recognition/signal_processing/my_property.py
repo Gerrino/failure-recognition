@@ -47,13 +47,18 @@ class MyProperty:
         if self.type.values is not None and len(self.type.values) > 0:
             if self.type.system_type in ["string", "int", "float"]:
                 return self.type.values[0]
+        if self.type.range is not None and len(self.type.range) > 0:
+            if self.type.system_type in ["string", "int", "float"]:
+                return self.type.range[0]
         if self.type.system_type == "int":
             return DEFAULT_INT
         if self.type.system_type == "float":
             return DEFAULT_FLOAT        
         if self.type.system_type == "array":
             return self.get_values()
-        raise ValueError("Could not find default value")
+        if self.type.system_type.startswith("dict"):
+            return None    
+        raise ValueError(f"Could not find default value for {self}")
 
 
     def get_range(self, i: int = None) -> list:
@@ -154,7 +159,7 @@ class MyProperty:
             hyper_parameters_of_dict = []
             for p in self.type.property_list:
                 hyper_parameters_of_dict.append(
-                    p.get_hyper_parameter_list(sensor)[0])
+                    p.get_hyper_parameter_list(sensor, cfg)[0]) # only first element???
             return hyper_parameters_of_dict
         
         print("Warning: no parameter for", self.name)
