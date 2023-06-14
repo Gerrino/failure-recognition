@@ -134,3 +134,6 @@ dmypy.json
 *.csv
 dataset_bue
 smac3-output*/
+*.sql
+*.xlsx
+user_data.yaml
