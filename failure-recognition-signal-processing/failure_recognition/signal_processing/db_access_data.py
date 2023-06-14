@@ -18,7 +18,7 @@ def load_db_data():
 
 
     series_data_frame = pd.read_sql_table(timeseries_me.__tablename__, connection, db_info["schema"], chunksize=500)
-    series_data_frame.columns = timeseries_me.__dict__.keys()
+
     pass
 
 
