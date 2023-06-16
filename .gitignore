@@ -137,3 +137,5 @@ smac3-output*/
 *.sql
 *.xlsx
 user_data.yaml
+*.db
+*.pkl

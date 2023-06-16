@@ -2,3 +2,5 @@ username: gerri
 userpassword: G3ndo$$$
 host: "localhost"
 schema: "new_schema"
+db_dataframe_pickle: "./examples/db_dump.pkl"
+db_dataframe_csv: "./examples/db_dataframe.csv"

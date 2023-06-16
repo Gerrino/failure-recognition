@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Callable, Dict, List, Set, Union
 
 from failure_recognition.signal_processing import PATH_DICT
+from failure_recognition.signal_processing.db_access_data import load_db_data
 from failure_recognition.signal_processing.feature import Feature
 from tsfresh.utilities.dataframe_functions import impute
 from tsfresh import extract_features
@@ -32,6 +33,7 @@ class FeatureContainer:
     random_forest_params: List[MyProperty] = field(default_factory=list)
     custom_features: Dict[str, Callable] = field(default_factory=dict)
     new_columns: Set[MyProperty] = field(default_factory=set)
+    id_column_name: str = "id"
 
     def __post_init__(self):
         if self.logger is None:
@@ -152,7 +154,7 @@ class FeatureContainer:
 
         if len(kind_to_fc_parameters[sensors[0]]) > 0:
             x = extract_features(
-                timeseries, column_id="id", column_sort="time", kind_to_fc_parameters=kind_to_fc_parameters
+                timeseries, column_id=self.id_column_name, column_sort="time", kind_to_fc_parameters=kind_to_fc_parameters
             )
             X = impute(x)
             self.column_update(X)
@@ -221,4 +223,11 @@ class FeatureContainer:
 if __name__ == "__main__":
     container = FeatureContainer()
     container.load(PATH_DICT["features"], PATH_DICT["forest_params"])
-    pass
+
+    db_df = load_db_data(save_data=True)
+
+    # series_data_frame.drop(series_data_frame.columns.difference(['time','id', "01_Temp01", "02_Temp02", "03_Temp03", "04_Temp04"]), 1, inplace=True)
+
+    # container.id_column_name = "TimeSeries_ME_id"
+    container.compute_feature_state(db_df, compute_for_all_features=True)
+    print(container.feature_state)

@@ -1,6 +1,6 @@
 [
   {
-    "enabled": true,
+    "enabled": false,
     "name": "find_peaks_feature",
     "input_parameters": [
       {
@@ -85,19 +85,19 @@
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "absolute_maximum",
     "input_parameters": [],
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "absolute_sum_of_changes",
     "input_parameters": [],
     "return_type": "float"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "agg_autocorrelation",
     "input_parameters": [
       {
@@ -127,7 +127,7 @@
     "return_type": "float"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "agg_linear_trend",
     "input_parameters": [
       {
@@ -196,7 +196,7 @@
     "return_type": "float"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "ar_coefficient",
     "input_parameters": [
       {
@@ -223,7 +223,7 @@
     "return_type": "pandas.Series"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "augmented_dickey_fuller",
     "input_parameters": [
       {
@@ -252,7 +252,7 @@
     "return_type": "float"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "autocorrelation",
     "input_parameters": [
       {
@@ -369,7 +369,7 @@
     "return_type": "float"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "count_above",
     "input_parameters": [
       {
@@ -456,7 +456,7 @@
     "return_type": "list"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "fft_aggregated",
     "input_parameters": [
       {
@@ -717,7 +717,7 @@
     "return_type": "float"
   },
   {
-    "enabled": true,
+    "enabled": false,
     "name": "mean",
     "input_parameters": [],
     "return_type": "float"
@@ -1039,7 +1039,7 @@
     "return_type": "int"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "variance",
     "input_parameters": [],
     "return_type": "float"

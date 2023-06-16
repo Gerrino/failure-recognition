@@ -185,6 +185,8 @@ class MyType(Generic[T]):
     default_value: T = None
     property_list: List[MyProperty] = None
     values: List[T] = None
+    element_type: any = None # not implemented yet
+    array_of_my_type: bool = False
 
     @classmethod
     def from_json(cls, json_obj, id_prefix) -> MyType:
