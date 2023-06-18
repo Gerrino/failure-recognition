@@ -23,7 +23,7 @@ class timeseries_me(Base):
     timeseries_Number = Column(Integer, primary_key=True)
     TimeSeries_ME_id = Column(Integer)
     timeseries_me_count = Column(Integer)
-    Temp01 = Column(Integer, name="01_Temp01")
+    Temp01 = Column(Float, name="01_Temp01")
     Temp02 = Column(Float, name="02_Temp02")
     Temp03 = Column(Float, name="03_Temp03")
     Temp04 = Column(Float, name="04_Temp04")
@@ -72,14 +72,50 @@ class timeseries_me(Base):
 
     @classmethod
     def get_rename_dict(cls) -> dict:
-        return {
+        ts_rename_map = {
+            "01_Temp01": "Temp01",
+            "02_Temp02": "Temp02",
+            "03_Temp03": "Temp03",
+            "04_Temp04": "Temp04",
+            "05_Temp05": "Temp05",
+            "06_Temp06": "Temp06",
+            "07_dP01": "dp01_07",
+            "08_dP02": "dp02_08",
+            "09_dP03": "dp03_09",
+            "10_dP04": "dp04_10",
+            "11_Temp07": "Temp07_11",
+            "12_Rf01": "Rf01_12",
+            "13_V01": "V01_13",
+            "14_Temp08": "Temp08_14",
+            "15_Rf02": "Rf02_15",
+            "16_V02": "V02_16",
+            "17_Temp09": "Temp09_17",
+            "18_Temp10": "Temp10_18",
+            "19_Temp11": "Temp11_19",
+            "20_Lubi01": "Lubi01_20",
+            "21_Q01": "Q01_21",
+            "22_Q02": "Q02_22",
+            "23_Blk1": "Blk1_23",
+            "24_Blk2": "Blk2_24",
+            "25_Blk3": "Blk3_25",
+            "26_Blk4": "Blk4_26",
+            "27_M": "M_27",
+            "28_Masse_Ofen": "Masse_Ofen_28",
+            "29_Temp12": "Temp12_29",
+            "30_Temp13": "Temp13_30",
+            "31_Q03": "Q03_31",
+            "spez._Q_Sprühmittelkonzentrat": "spez_Sprühmittelkonzentrat",
+            "Differenz_Temp10/Temp11": "Differenz_Temp10Temp11"
+        }
+        ts_rename_map.update({
             cls.timeseries_me_count.name: "time",
             cls.TimeSeries_ME_id.name: "id"
-        }
+        })
+        return ts_rename_map
 
     @classmethod
     def get_drop_list(cls) -> list:
-        return [cls.timeseries_Number]
+        return [cls.timeseries_Number.name]
 
 
 class timeseries_zdg(Base):
