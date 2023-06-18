@@ -221,13 +221,20 @@ class FeatureContainer:
 
 
 if __name__ == "__main__":
+    #int(test_classification.Zyklus_Nummer) == 6
+
     container = FeatureContainer()
     container.load(PATH_DICT["features"], PATH_DICT["forest_params"])
 
-    db_df = load_db_data(save_data=True)
+    # db_df = load_db_data(save_data=True)
 
     # series_data_frame.drop(series_data_frame.columns.difference(['time','id', "01_Temp01", "02_Temp02", "03_Temp03", "04_Temp04"]), 1, inplace=True)
 
     # container.id_column_name = "TimeSeries_ME_id"
+    db_df = pd.read_pickle("./examples/dumps/timeseries_zdg.pkl")
     container.compute_feature_state(db_df, compute_for_all_features=True)
-    print(container.feature_state)
+    # print(container.feature_state)
+    print(list(container.feature_state.columns))
+
+
+

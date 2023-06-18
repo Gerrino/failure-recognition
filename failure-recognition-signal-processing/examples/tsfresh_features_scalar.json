@@ -756,8 +756,7 @@
             0,
             0
           ],
-          "system_type": "int",
-          "default_value": 2
+          "system_type": "int"
         }
       }
     ],
@@ -841,10 +840,9 @@
         "type": {
           "range": [
             0,
-            1000
+            0
           ],
-          "system_type": "int",
-          "default_value": 500 
+          "system_type": "int"
         }
       }
     ],
@@ -879,8 +877,7 @@
             0.0,
             0.0
           ],
-          "system_type": "float",
-          "default_value": 0.5
+          "system_type": "float"
         }
       }
     ],
@@ -1012,8 +1009,7 @@
             0.0,
             1.0
           ],
-          "system_type": "float",
-          "default_value": 0.5
+          "system_type": "float"
         }
       }
     ],
