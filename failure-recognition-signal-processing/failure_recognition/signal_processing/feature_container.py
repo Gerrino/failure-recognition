@@ -223,18 +223,26 @@ class FeatureContainer:
 if __name__ == "__main__":
     #int(test_classification.Zyklus_Nummer) == 6
 
-    container = FeatureContainer()
-    container.load(PATH_DICT["features"], PATH_DICT["forest_params"])
 
-    # db_df = load_db_data(save_data=True)
+    # classification_result_feature_values = {for id_classification in classification_result_set_ids.items()}
+    #classification_result_feature_list = {c for c in classification_result_set}
 
-    # series_data_frame.drop(series_data_frame.columns.difference(['time','id', "01_Temp01", "02_Temp02", "03_Temp03", "04_Temp04"]), 1, inplace=True)
+    #feature_to_classification
+  
+    pass
+    # container = FeatureContainer()
+    # container.load(PATH_DICT["features"], PATH_DICT["forest_params"])
 
-    # container.id_column_name = "TimeSeries_ME_id"
-    db_df = pd.read_pickle("./examples/dumps/timeseries_zdg.pkl")
-    container.compute_feature_state(db_df, compute_for_all_features=True)
-    # print(container.feature_state)
-    print(list(container.feature_state.columns))
+    # # db_df = load_db_data(save_data=True)
+
+    # # series_data_frame.drop(series_data_frame.columns.difference(['time','id', "01_Temp01", "02_Temp02", "03_Temp03", "04_Temp04"]), 1, inplace=True)
+
+    # # container.id_column_name = "TimeSeries_ME_id"
+    # db_df = pd.read_pickle("./examples/dumps/timeseries_zdg.pkl")
+    # container.compute_feature_state(db_df, compute_for_all_features=True)
+    # # print(container.feature_state)
+    # print(list(container.feature_state.columns))
+    # container.feature_state.to_pickle("./examples/dumps/timeseries_zdg_feature_state.pkl")
 
 
 

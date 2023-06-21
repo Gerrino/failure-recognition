@@ -722,7 +722,7 @@
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "maximum",
     "input_parameters": [],
     "return_type": "float"
@@ -764,19 +764,19 @@
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "mean_second_derivative_central",
     "input_parameters": [],
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "median",
     "input_parameters": [],
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "minimum",
     "input_parameters": [],
     "return_type": "float"
@@ -937,13 +937,13 @@
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "root_mean_square",
     "input_parameters": [],
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "sample_entropy",
     "input_parameters": [],
     "return_type": "float"
@@ -978,7 +978,7 @@
     "return_type": "pandas.Series"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "standard_deviation",
     "input_parameters": [],
     "return_type": "float"
@@ -1002,7 +1002,7 @@
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "symmetry_looking",
     "input_parameters": [
       {
@@ -1060,13 +1060,13 @@
     "return_type": "float"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "variance_larger_than_standard_deviation",
     "input_parameters": [],
     "return_type": "bool"
   },
   {
-    "enabled": false,
+    "enabled": true,
     "name": "variation_coefficient",
     "input_parameters": [],
     "return_type": "float"
