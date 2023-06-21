@@ -1,4 +1,4 @@
-"""Module providing information about feature for any error class"""
+"""Module providing information about features for any error class"""
 
 from typing import Dict
 import pandas as pd
