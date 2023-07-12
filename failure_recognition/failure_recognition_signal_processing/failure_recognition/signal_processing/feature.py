@@ -2,7 +2,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List
-from failure_recognition.signal_processing.my_property import MyProperty
+from failure_recognition_signal_processing.signal_processing.my_property import MyProperty
 
 
 @dataclass

@@ -1,13 +1,15 @@
 from setuptools import setup, find_namespace_packages
 
 required = [
-    "sklearn",
+    "scikit-learn",
     "click",
     "tqdm",
     "numpy<=1.22",
     "matplotlib",
     "pandas",
+    "cuda-python",
     "tsfresh",
+    "sqlalchemy"
 ]
 
 setup(

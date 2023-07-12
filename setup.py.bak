@@ -1,0 +1,29 @@
+from setuptools import setup, find_namespace_packages
+import sys
+__version__ = 'dev'
+
+required = [
+    "matplotlib",
+    "pyyaml",
+    "statsmodels",
+    "scipy",
+    "sklearn",
+    "click",
+    "tqdm",
+    "numpy<=1.22",
+    "pandas",
+    "graphviz",
+    "sympy",
+    "pyod"
+]
+
+setup(
+    name="failure-recognition",
+    version=__version__,
+    install_requires=required,
+    extras_require={
+        "dev": ["pylint", "black", "sphinx"],
+    },
+    py_modules=['failure-recognition'],    
+)
+

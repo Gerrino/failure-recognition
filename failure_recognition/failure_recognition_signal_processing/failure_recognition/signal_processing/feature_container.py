@@ -6,15 +6,16 @@ import logging
 from pathlib import Path
 from typing import Callable, Dict, List, Set, Union
 
-from failure_recognition.signal_processing import PATH_DICT
-from failure_recognition.signal_processing.db_access_data import load_db_data
-from failure_recognition.signal_processing.feature import Feature
+
+from failure_recognition_signal_processing.signal_processing import PATH_DICT
+from failure_recognition_signal_processing.signal_processing.db_access_data import load_db_data
+from failure_recognition_signal_processing.signal_processing.feature import Feature
 from tsfresh.utilities.dataframe_functions import impute
 from tsfresh import extract_features
 import pandas as pd
 import datetime
-from failure_recognition.signal_processing.my_property import MyProperty
-from failure_recognition.signal_processing.signal_helper import find_peaks_feature
+from failure_recognition_signal_processing.signal_processing.my_property import MyProperty
+from failure_recognition_signal_processing.signal_processing.signal_helper import find_peaks_feature
 
 
 @dataclass
@@ -230,8 +231,8 @@ if __name__ == "__main__":
     #feature_to_classification
   
     pass
-    # container = FeatureContainer()
-    # container.load(PATH_DICT["features"], PATH_DICT["forest_params"])
+    container = FeatureContainer()
+    container.load(PATH_DICT["features"], PATH_DICT["forest_params"])
 
     # # db_df = load_db_data(save_data=True)
 

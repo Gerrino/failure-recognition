@@ -3,7 +3,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Generic, List, TypeVar
-from failure_recognition.signal_processing import (
+from failure_recognition_signal_processing.signal_processing import (
     DEFAULT_FLOAT,
     DEFAULT_INT,
     DEFAULT_MAX_FLOAT,

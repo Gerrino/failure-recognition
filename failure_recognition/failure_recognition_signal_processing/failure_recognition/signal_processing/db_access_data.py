@@ -2,7 +2,7 @@ import sqlalchemy as db
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Table
 import yaml
-from failure_recognition.signal_processing.db_schema import timeseries_me, SchemaInterface, timeseries_zdg
+from failure_recognition_signal_processing.signal_processing.db_schema import timeseries_me, SchemaInterface, timeseries_zdg
 # mysql://gerri:G3ndo$$$@localhost/modeldb
 import pandas as pd
 
