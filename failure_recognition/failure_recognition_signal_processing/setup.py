@@ -15,7 +15,7 @@ required = [
 setup(
     name="failure-recognition-signal-processing",
     python_requires='<3.10',
-    packages=find_namespace_packages(include=["failure_recognition.*"]),
+    packages=['failure_recognition'],
     install_requires=required,
     extras_require={
         "dev": ["pylint", "black"],
