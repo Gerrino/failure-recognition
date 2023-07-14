@@ -20,4 +20,5 @@ setup(
     extras_require={
         "dev": ["pylint", "black"],
     },
+    include_package_data=True
 )

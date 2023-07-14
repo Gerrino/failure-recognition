@@ -1,0 +1,2 @@
+include ./failure_recognition/failure_recognition_signal_processing/examples/tsfresh_features.json
+include ./failure_recognition/failure_recognition_signal_processing/examples/tsfresh_random_forest.json

@@ -14,6 +14,7 @@ setup(
     extras_require={
         "dev": ["pylint", "black", "sphinx"],
     },
-    py_modules=['failure_recognition'],    
+    py_modules=['failure_recognition'],
+    include_package_data=True
 )
 
