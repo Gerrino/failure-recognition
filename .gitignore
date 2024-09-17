@@ -139,3 +139,4 @@ smac3-output*/
 user_data.yaml
 *.db
 *.pkl
+failure_recognition/failure_recognition_signal_processing/examples/dumps/bue_data_classification_20230601.tsv

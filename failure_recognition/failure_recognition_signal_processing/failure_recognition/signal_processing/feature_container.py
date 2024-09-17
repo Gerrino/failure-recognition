@@ -238,8 +238,8 @@ if __name__ == "__main__":
     # # series_data_frame.drop(series_data_frame.columns.difference(['time','id', "01_Temp01", "02_Temp02", "03_Temp03", "04_Temp04"]), 1, inplace=True)
 
     # # container.id_column_name = "TimeSeries_ME_id"
-    # db_df = pd.read_pickle("./examples/dumps/timeseries_zdg.pkl")
-    # container.compute_feature_state(db_df, compute_for_all_features=True)
+    db_df = pd.read_pickle("./examples/dumps/timeseries_zdg.pkl")
+    container.compute_feature_state(db_df, compute_for_all_features=True)
     # # print(container.feature_state)
     # print(list(container.feature_state.columns))
     # container.feature_state.to_pickle("./examples/dumps/timeseries_zdg_feature_state.pkl")

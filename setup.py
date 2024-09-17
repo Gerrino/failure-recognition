@@ -9,12 +9,12 @@ required = [
 setup(
     name="failure_recognition",
     version=__version__,
-    packages=find_namespace_packages(include=['failure_recognition.*']),
+    packages=find_namespace_packages(include=['failure_recognition.*', "failure_recognition_signal_proccessing.*", "failure_recognition.failure_recognition_signal_proccessing.*"]),
     install_requires=required,
     extras_require={
         "dev": ["pylint", "black", "sphinx"],
     },
-    py_modules=['failure_recognition'],
+    py_modules=['failure_recognition_signal_proccessing'],
     include_package_data=True
 )
 
